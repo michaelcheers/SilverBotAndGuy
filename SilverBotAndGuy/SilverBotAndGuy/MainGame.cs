@@ -1,5 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using SilverBotAndGuy.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,18 +12,30 @@ using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
+    enum Direction4D
+    {
+        None = 0,
+        Up = 1,
+        Down = 2,
+        Left = 3,
+        Right = 4,
+    }
+
     enum Block : byte
     {
         Floor = 0,
         Crate = 1,
         Bomb = 2,
-        LaserRight = 4,
-        LaserDown = 8,
-        LaserLeft = 16,
-        LaserUp = 32
+        LaserGunRight = 4,
+        LaserGunDown = 8,
+        LaserGunLeft = 16,
+        LaserGunUp = 32
     }
     class MainGame : Game
     {
+        Texture2D4D laserGun;
+        Texture2D4D dozerBot;
+        Texture2D4D silverBot;
         Texture2D laserRight;
         Texture2D laserDown;
         Texture2D laserPulse;
@@ -28,8 +43,12 @@ namespace SilverBotAndGuy
         Texture2D bomb;
         Texture2D floor;
         Block[,] blocks;
+        InputState inputState = new InputState();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        Direction4D botDirection = Direction4D.Right;
+
         public MainGame () : base()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -59,6 +78,9 @@ namespace SilverBotAndGuy
             laserRight = Content.Load<Texture2D>("laser-right");
             laserDown = Content.Load<Texture2D>("laser-down");
             laserPulse = Content.Load<Texture2D>("laser-pulse");
+         //   laserGun = new Texture2D4D(Content, "lasergun");
+            dozerBot = new Texture2D4D(Content, "dozerbot");
+            silverBot = new Texture2D4D(Content, "mirrorbot");
 
             base.LoadContent();
         }
@@ -91,12 +113,34 @@ namespace SilverBotAndGuy
                     }
                 }
             }
+
+            spriteBatch.Draw(dozerBot.Get(botDirection), GetPosition(0, 0), Color.White);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            inputState.Update();
+
+            if( inputState.WasKeyJustPressed(Keys.Up) )
+            {
+                botDirection = Direction4D.Up;
+            }
+            else if (inputState.WasKeyJustPressed(Keys.Down))
+            {
+                botDirection = Direction4D.Down;
+            }
+            else if (inputState.WasKeyJustPressed(Keys.Left))
+            {
+                botDirection = Direction4D.Left;
+            }
+            else if (inputState.WasKeyJustPressed(Keys.Right))
+            {
+                botDirection = Direction4D.Right;
+            }
+
         }
     }
 }

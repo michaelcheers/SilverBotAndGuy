@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Graphics\Laserbeam.cs" />
     <Compile Include="Graphics\Texture2D4D.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="MainGame.cs" />

@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
-    enum Direction4D
+    public enum Direction4D
     {
         None = 0,
         Up = 1,
-        Down = 2,
-        Left = 3,
-        Right = 4,
+        Down = -1,
+        Left = 2,
+        Right = -2,
     }
 
     enum Block : byte
@@ -46,6 +46,9 @@ namespace SilverBotAndGuy
         InputState inputState = new InputState();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        LaserbeamManager laserManager;
+
+        public static Random rand = new Random();
 
         Direction4D botDirection = Direction4D.Right;
 
@@ -82,6 +85,8 @@ namespace SilverBotAndGuy
             dozerBot = new Texture2D4D(Content, "dozerbot");
             silverBot = new Texture2D4D(Content, "mirrorbot");
 
+            laserManager = new LaserbeamManager(Content);
+
             base.LoadContent();
         }
         public Rectangle GetPosition (int x, int y)
@@ -116,6 +121,7 @@ namespace SilverBotAndGuy
 
             spriteBatch.Draw(dozerBot.Get(botDirection), GetPosition(0, 0), Color.White);
 
+            laserManager.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -141,6 +147,7 @@ namespace SilverBotAndGuy
                 botDirection = Direction4D.Right;
             }
 
+            laserManager.Update();
         }
     }
 }

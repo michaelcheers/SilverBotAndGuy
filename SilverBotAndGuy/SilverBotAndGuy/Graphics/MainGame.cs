@@ -7,6 +7,7 @@ using SilverBotAndGuy.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,16 +23,6 @@ namespace SilverBotAndGuy
         Right = -2,
     }
 
-    enum Block : byte
-    {
-        Floor = 0,
-        Crate = 1,
-        Bomb = 2,
-        LaserGunRight = 4,
-        LaserGunDown = 8,
-        LaserGunLeft = 16,
-        LaserGunUp = 32
-    }
     class MainGame : Game
     {
         class GameTextures
@@ -82,11 +73,7 @@ namespace SilverBotAndGuy
         }
         protected override void Initialize()
         {
-            blocks = new Block[,] 
-            { 
-            {Block.Crate, Block.Crate, Block.Floor},
-            {Block.Bomb, Block.Floor, Block.Crate}
-            };
+            blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"));
             base.Initialize();
         }
         protected override void OnExiting(object sender, EventArgs args)

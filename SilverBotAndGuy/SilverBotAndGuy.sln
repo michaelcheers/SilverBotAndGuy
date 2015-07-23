@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverBotAndGuy", "SilverBotAndGuy\SilverBotAndGuy.csproj", "{80A2C139-102D-4C4D-B45F-E624A9A04C1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelCreator", "LevelCreator\LevelCreator.csproj", "{5CC71AEA-FFCC-4C7B-9096-B1066E1E9AB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{80A2C139-102D-4C4D-B45F-E624A9A04C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80A2C139-102D-4C4D-B45F-E624A9A04C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80A2C139-102D-4C4D-B45F-E624A9A04C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CC71AEA-FFCC-4C7B-9096-B1066E1E9AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC71AEA-FFCC-4C7B-9096-B1066E1E9AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC71AEA-FFCC-4C7B-9096-B1066E1E9AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC71AEA-FFCC-4C7B-9096-B1066E1E9AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

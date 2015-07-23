@@ -69,6 +69,7 @@ namespace SilverBotAndGuy
         SpriteBatch spriteBatch;
         LaserbeamManager laserManager;
         GameTextures textures;
+        PlayerAvatar dozerBot;
 
         public static Random rand = new Random();
 
@@ -99,6 +100,8 @@ namespace SilverBotAndGuy
 
             laserManager = new LaserbeamManager(Content);
             textures = new GameTextures(Content);
+
+            dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(2,7));
 
             base.LoadContent();
         }
@@ -145,9 +148,10 @@ namespace SilverBotAndGuy
             spriteBatch.Draw(textures.crate, GetPosition(2, 12), Color.White);
 
             spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10), Color.White);
-            spriteBatch.Draw(textures.dozerBot.Get(botDirection), GetPosition(0, 0), Color.White);
             Rectangle silverBotPos = GetPosition(5, 9);
             spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y), Color.White);
+
+            dozerBot.Draw(spriteBatch);
 
             laserManager.Draw(spriteBatch);
             spriteBatch.End();
@@ -158,22 +162,7 @@ namespace SilverBotAndGuy
             base.Update(gameTime);
             inputState.Update();
 
-            if( inputState.WasKeyJustPressed(Keys.Up) )
-            {
-                botDirection = Direction4D.Up;
-            }
-            else if (inputState.WasKeyJustPressed(Keys.Down))
-            {
-                botDirection = Direction4D.Down;
-            }
-            else if (inputState.WasKeyJustPressed(Keys.Left))
-            {
-                botDirection = Direction4D.Left;
-            }
-            else if (inputState.WasKeyJustPressed(Keys.Right))
-            {
-                botDirection = Direction4D.Right;
-            }
+            dozerBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right));
 
             laserManager.Update();
         }

@@ -54,6 +54,7 @@
     <Compile Include="Graphics\Texture2D4D.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="PlayerAvatar.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -164,5 +164,30 @@ namespace Input
         {
             return keyboard.IsKeyUp(key);
         }
+
+        public Vector2 GetPseudoJoystick(Keys up, Keys down, Keys left, Keys right)
+        {
+            float upDown = 0.0f;
+            if( keyboard.IsKeyDown(up) )
+            {
+                upDown = -1.0f;
+            }
+            else if( keyboard.IsKeyDown(down) )
+            {
+                upDown = 1.0f;
+            }
+
+            float leftRight = 0.0f;
+            if (keyboard.IsKeyDown(left))
+            {
+                leftRight = -1.0f;
+            }
+            else if (keyboard.IsKeyDown(right))
+            {
+                leftRight = 1.0f;
+            }
+
+            return new Vector2(leftRight, upDown);
+        }
     }
 }

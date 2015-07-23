@@ -130,10 +130,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\lasergun_d.png" />
-    <Content Include="Content\lasergun_l.png" />
-    <Content Include="Content\lasergun_r.png" />
-    <Content Include="Content\lasergun_u.png" />
+    <Content Include="Content\lasergun_d.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lasergun_l.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lasergun_r.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\lasergun_u.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\panel.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

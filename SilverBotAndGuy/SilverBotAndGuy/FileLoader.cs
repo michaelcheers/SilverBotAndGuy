@@ -29,10 +29,10 @@ namespace SilverBotAndGuy
                         case Block.LaserGunRight:
                             {
                                 Laserbeam beam = new Laserbeam(Content);
-                                beam.SetStartDirection(Direction4D.Down);
+                                beam.SetStartDirection(Direction4D.Right);
                                 if (x == width - 1)
                                     break;
-                                for (int n = (int)(x); n < width; n++)
+                                for (int n = (int)(x + 1); n < width; n++)
                                 {
                                     beam.Add(new Microsoft.Xna.Framework.Vector2(n, y));
                                 }
@@ -45,7 +45,7 @@ namespace SilverBotAndGuy
                                 beam.SetStartDirection(Direction4D.Down);
                                 if (y == height - 1)
                                     break;
-                                for (int n = (int)(y); n < height; n++)
+                                for (int n = (int)(y + 1); n < height; n++)
                                 {
                                     beam.Add(new Microsoft.Xna.Framework.Vector2(x, n));
                                 }

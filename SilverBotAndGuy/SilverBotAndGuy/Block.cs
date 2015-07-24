@@ -11,9 +11,12 @@ namespace SilverBotAndGuy
         Floor = 0,
         Crate = 1,
         Bomb = 2,
-        LaserGunRight = 0xF / (2 * 2),
-        LaserGunDown = 0xF / (2),
-        LaserGunLeft = 0xF,
-        LaserGunUp = 0xF * 2
+        Panel = 3,
+        Wall = 4,
+        LaserProofWall = 5,
+        LaserGunRight = 0xF / (2),
+        LaserGunDown = 0xF,
+        LaserGunLeft = 0xF * 2,
+        LaserGunUp = 0xF * (2 * 2)
     }
 }

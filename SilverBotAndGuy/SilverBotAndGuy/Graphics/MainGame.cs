@@ -78,7 +78,11 @@ namespace SilverBotAndGuy
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
                     Block current = blocks[x, y];
-                    if (current.HasFlag(Block.Crate))
+                    if (current.HasFlag(Block.Panel))
+                    {
+                        spriteBatch.Draw(textures.panel, GetPosition(x, y), Color.White);
+                    }
+                    else if (current.HasFlag(Block.Crate))
                     {
                         spriteBatch.Draw(textures.crate, GetPosition(x, y), Color.White);
                     }

@@ -80,27 +80,43 @@ namespace SilverBotAndGuy
                     Block current = blocks[x, y];
                     if (current.HasFlag(Block.Wall))
                     {
-                        spriteBatch.Draw(textures.wall, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.wall, GetPosition(x, y));
+                    }
+                    else if (current.HasFlag(Block.LaserGunDown))
+                    {
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Down, GetPosition(x, y));
+                    }
+                    else if (current.HasFlag(Block.LaserGunLeft))
+                    {
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Left, GetPosition(x, y));
+                    }
+                    else if (current.HasFlag(Block.LaserGunRight))
+                    {
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Right, GetPosition(x, y));
+                    }
+                    else if (current.HasFlag(Block.LaserGunUp))
+                    {
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Up, GetPosition(x, y));
                     }
                     else if (current.HasFlag(Block.LaserProofWall))
                     {
-                        spriteBatch.Draw(textures.laserProofWall, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.laserProofWall, GetPosition(x, y));
                     }
                     else if (current.HasFlag(Block.Panel))
                     {
-                        spriteBatch.Draw(textures.panel, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.panel, GetPosition(x, y));
                     }
                     else if (current.HasFlag(Block.Crate))
                     {
-                        spriteBatch.Draw(textures.crate, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.crate, GetPosition(x, y));
                     }
                     else if (current.HasFlag(Block.Bomb))
                     {
-                        spriteBatch.Draw(textures.bomb, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.bomb, GetPosition(x, y));
                     }
                     else
                     {
-                        spriteBatch.Draw(textures.floor, GetPosition(x, y), Color.White);
+                        spriteBatch.Draw(textures.floor, GetPosition(x, y));
                     }
                 }
             }
@@ -109,17 +125,17 @@ namespace SilverBotAndGuy
             {
                 for (int y = 8; y < 14; y++ )
                 {
-                    spriteBatch.Draw(textures.floor, GetPosition(x, y), Color.White);
+                    spriteBatch.Draw(textures.floor, GetPosition(x, y));
                 }
             }
-            spriteBatch.Draw(textures.wall, GetPosition(8, 11), Color.White);
-            spriteBatch.Draw(textures.wall, GetPosition(8, 12), Color.White);
-            spriteBatch.Draw(textures.panel, GetPosition(4, 12), Color.White);
-            spriteBatch.Draw(textures.crate, GetPosition(2, 12), Color.White);
+            spriteBatch.Draw(textures.wall, GetPosition(8, 11));
+            spriteBatch.Draw(textures.wall, GetPosition(8, 12));
+            spriteBatch.Draw(textures.panel, GetPosition(4, 12));
+            spriteBatch.Draw(textures.crate, GetPosition(2, 12));
 
-            spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10), Color.White);
+            spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10));
             Rectangle silverBotPos = GetPosition(5, 9);
-            spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y), Color.White);
+            spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y));
 
             dozerBot.Draw(spriteBatch);
 

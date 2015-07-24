@@ -31,6 +31,26 @@ namespace LevelCreator
             {
                 switch (c)
                 {
+                    case 'r':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunRight;
+                            break;
+                        }
+                    case 'l':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunLeft;
+                            break;
+                        }
+                    case 'u':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunUp;
+                            break;
+                        }
+                    case 'd':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunDown;
+                            break;
+                        }
                     case 'w':
                         {
                             blocks[x, y] = (byte)Block.Wall;

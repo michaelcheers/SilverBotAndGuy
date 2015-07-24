@@ -78,8 +78,8 @@ namespace LevelCreator
                     byte[,] bytes = GetBytes(out width, out height);
                     if (bytes == null)
                         return;
-                    byte[] resultBytes = new byte[bytes.Length + 8];
-                    Buffer.BlockCopy(bytes, 0, resultBytes, 8, bytes.Length);
+                    byte[] resultBytes = new byte[bytes.Length];
+                    Buffer.BlockCopy(bytes, 0, resultBytes, 0, resultBytes.Length);
                     writer.Write(width);
                     writer.Write(height);
                     writer.Write(resultBytes, 0, resultBytes.Length);

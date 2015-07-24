@@ -12,12 +12,12 @@ namespace SilverBotAndGuy
         public static Block[,] ReadFile (Stream stream)
         {
             BinaryReader reader = new BinaryReader(stream);
-            int width = reader.ReadInt32();
-            int height = reader.ReadInt32();
+            uint width = reader.ReadUInt32();
+            uint height = reader.ReadUInt32();
             Block[,] result = new Block[width, height];
-            for (int x = 0; x < width; x++)
+            for (uint x = 0; x < width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (uint y = 0; y < height; y++)
                 {
                     result[x, y] = (Block)stream.ReadByte();
                 }

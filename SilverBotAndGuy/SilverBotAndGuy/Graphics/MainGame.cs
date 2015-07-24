@@ -81,45 +81,25 @@ namespace SilverBotAndGuy
                 {
                     Block current = blocks[x, y];
                     if (current.HasFlag(Block.LaserGunDown))
-                    {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Down, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.LaserGunLeft))
-                    {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Left, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.LaserGunRight))
-                    {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Right, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.LaserGunUp))
-                    {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Up, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.Wall))
-                    {
                         spriteBatch.Draw(textures.wall, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.LaserProofWall))
-                    {
                         spriteBatch.Draw(textures.laserProofWall, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.Panel))
-                    {
                         spriteBatch.Draw(textures.panel, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.Crate))
-                    {
                         spriteBatch.Draw(textures.crate, GetPosition(x, y));
-                    }
                     else if (current.HasFlag(Block.Bomb))
-                    {
                         spriteBatch.Draw(textures.bomb, GetPosition(x, y));
-                    }
                     else
-                    {
                         spriteBatch.Draw(textures.floor, GetPosition(x, y));
-                    }
                 }
             }
 

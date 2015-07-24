@@ -31,6 +31,16 @@ namespace LevelCreator
             {
                 switch (c)
                 {
+                    case 'w':
+                        {
+                            blocks[x, y] = (byte)Block.Wall;
+                            break;
+                        }
+                    case '#':
+                        {
+                            blocks[x, y] = (byte)Block.LaserProofWall;
+                            break;
+                        }
                     case 'p':
                         {
                             blocks[x, y] = (byte)Block.Panel;

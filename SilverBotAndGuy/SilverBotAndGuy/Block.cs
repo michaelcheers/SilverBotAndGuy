@@ -8,15 +8,15 @@ namespace SilverBotAndGuy
 {
     enum Block : byte
     {
-        Floor = 0,
-        Crate = 1,
-        Bomb = 2,
-        Panel = 3,
-        Wall = 4,
-        LaserProofWall = 5,
-        LaserGunRight = 0xF / (2),
-        LaserGunDown = 0xF,
-        LaserGunLeft = 0xF * 2,
-        LaserGunUp = 0xF * (2 * 2)
+        Floor = 0x0,
+        Crate = 0x1,
+        Bomb = 0x2,
+        Panel = 0x3,
+        Wall = 0x4,
+        LaserProofWall = 0x5,
+        LaserGunRight = 0x6,
+        LaserGunDown = 0x7,
+        LaserGunLeft = 0x8,
+        LaserGunUp = 0x9
     }
 }

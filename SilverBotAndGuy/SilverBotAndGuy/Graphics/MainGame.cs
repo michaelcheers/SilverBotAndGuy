@@ -44,7 +44,6 @@ namespace SilverBotAndGuy
         }
         protected override void Initialize()
         {
-            blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"));
             base.Initialize();
         }
         protected override void OnExiting(object sender, EventArgs args)
@@ -57,6 +56,9 @@ namespace SilverBotAndGuy
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             laserManager = new LaserbeamManager(Content);
+            IEnumerable<Laserbeam> laserBeams;
+            blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"), Content, out laserBeams);
+            laserManager.AddRange(laserBeams);
             textures = new GameTextures(Content);
 
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(2,7));
@@ -78,11 +80,7 @@ namespace SilverBotAndGuy
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
                     Block current = blocks[x, y];
-                    if (current.HasFlag(Block.Wall))
-                    {
-                        spriteBatch.Draw(textures.wall, GetPosition(x, y));
-                    }
-                    else if (current.HasFlag(Block.LaserGunDown))
+                    if (current.HasFlag(Block.LaserGunDown))
                     {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Down, GetPosition(x, y));
                     }
@@ -97,6 +95,10 @@ namespace SilverBotAndGuy
                     else if (current.HasFlag(Block.LaserGunUp))
                     {
                         spriteBatch.Draw(textures.laserGun, Direction4D.Up, GetPosition(x, y));
+                    }
+                    else if (current.HasFlag(Block.Wall))
+                    {
+                        spriteBatch.Draw(textures.wall, GetPosition(x, y));
                     }
                     else if (current.HasFlag(Block.LaserProofWall))
                     {

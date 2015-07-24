@@ -23,6 +23,11 @@ namespace SilverBotAndGuy.Graphics
             pulseH = Content.Load<Texture2D>("laser_pulse_h");
             pulseV = Content.Load<Texture2D>("laser_pulse_v");
         }
+
+        public static implicit operator LaserbeamTextures (ContentManager Content)
+        {
+            return new LaserbeamTextures(Content);
+        }
     }
 
     public class LaserbeamManager
@@ -44,6 +49,16 @@ namespace SilverBotAndGuy.Graphics
             test.Add(new Vector2(6, 12));
             test.Add(new Vector2(7, 12));
             beams.Add(test);
+        }
+       
+        internal void Add (Laserbeam laserBeam)
+        {
+            beams.Add(laserBeam);
+        }
+        
+        internal void AddRange (IEnumerable<Laserbeam> laserBeam)
+        {
+            beams.AddRange(laserBeam);
         }
 
         public void Update()

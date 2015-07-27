@@ -39,7 +39,7 @@ namespace SilverBotAndGuy.Graphics
         {
             textures = new LaserbeamTextures(Content);
 
-            Laserbeam test = new Laserbeam(textures);
+            /*Laserbeam test = new Laserbeam(textures);
             test.SetStartDirection(Direction4D.Right);
             test.Add(new Vector2(3, 10));
             test.Add(new Vector2(4, 10));
@@ -48,7 +48,7 @@ namespace SilverBotAndGuy.Graphics
             test.Add(new Vector2(5, 12));
             test.Add(new Vector2(6, 12));
             test.Add(new Vector2(7, 12));
-            beams.Add(test);
+            beams.Add(test);*/
         }
        
         internal void Add (Laserbeam laserBeam)
@@ -80,7 +80,57 @@ namespace SilverBotAndGuy.Graphics
 
     class Laserbeam
     {
-        class LaserbeamSquare
+        internal InternalLaserbeam Internal
+        {
+            get
+            {
+                return new InternalLaserbeam(this);
+            }
+        }
+        internal class InternalLaserbeam
+        {
+            internal InternalLaserbeam (Laserbeam laserBeam)
+            {
+                this.laserBeam = laserBeam;
+            }
+            Direction4D startDirection
+            {
+                get
+                {
+                    return laserBeam.startDirection;
+                }
+            }
+            internal List<LaserbeamSquare> squares
+            {
+                get
+                {
+                    return laserBeam.squares;
+                }
+            }
+            internal List<float> pulses
+            {
+                get
+                {
+                    return laserBeam.pulses;
+                }
+            }
+            internal LaserbeamTextures textures
+            {
+                get
+                {
+                    return laserBeam.textures;
+                }
+            }
+            internal int nextPulseCountdown
+            {
+                get
+                {
+                    return laserBeam.nextPulseCountdown;
+                }
+            }
+            Laserbeam laserBeam;
+        }
+        internal class LaserbeamSquare
         {
             public Direction4D startDirection;
             public Direction4D endDirection;
@@ -147,10 +197,10 @@ namespace SilverBotAndGuy.Graphics
                         spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, offsetPosition*32.0f), Color.White);
                         break;
                     case Direction4D.Up:
-                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, 32.0f-offsetPosition * 32.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, -offsetPosition * 32.0f), Color.White);
                         break;
                     case Direction4D.Left:
-                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(32.0f - offsetPosition * 32.0f, 0.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(- offsetPosition * 32.0f, 0.0f), Color.White);
                         break;
                     case Direction4D.Right:
                         spriteBatch.Draw(textures.pulseH, pos + new Vector2(offsetPosition * 32.0f, 0.0f), Color.White);

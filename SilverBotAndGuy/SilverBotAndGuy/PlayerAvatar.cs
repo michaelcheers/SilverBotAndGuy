@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SilverBotAndGuy.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +18,18 @@ namespace SilverBotAndGuy
         Vector2 animVel;
         Texture2D4D textures;
         Direction4D facing;
+        IEnumerable<Laserbeam> laserBeams;
+        Block[,] grid;
 
-        public PlayerAvatar(Texture2D4D aTextures, Vector2 initialGridPos)
+        public PlayerAvatar(Texture2D4D aTextures, Vector2 initialGridPos, Block[,] grid, IEnumerable<Laserbeam> laserBeams)
         {
             gridPos = initialGridPos;
             animPos = gridPos * 32.0f;
             animTarget = animPos;
             textures = aTextures;
             facing = Direction4D.Right;
+            this.grid = grid;
+            this.laserBeams = laserBeams;
         }
 
         public void Update(Vector2 joystick)
@@ -93,14 +98,46 @@ namespace SilverBotAndGuy
             }
         }
 
+        public void Die ()
+        {
+            Process.GetCurrentProcess().Kill();
+        }
+
         public bool TryStep(Direction4D moveDirection)
         {
-            if (moveDirection != Direction4D.None) // TODO: check for collisions
+            if (moveDirection != Direction4D.None)
             {
                 facing = moveDirection;
-                gridPos += moveDirection.ToVector2();
-                animTarget = gridPos * 32.0f;
-                return true;
+                Vector2 moveTo = moveDirection.ToVector2() + gridPos;
+                if (moveTo.X == -1 || moveTo.Y == -1)
+                    return false;
+                Block moveToBlock = grid[(int)moveTo.X, (int)moveTo.Y];
+                foreach (var item in laserBeams)
+                {
+                    Laserbeam.InternalLaserbeam Internal = item.Internal;
+                    foreach (Laserbeam.LaserbeamSquare item2 in Internal.squares)
+                    {
+                        if ((item2.pos / 32) == moveTo)
+                            Die();
+                    }
+                }
+                if (moveToBlock == Block.Crate)
+                {
+                    Vector2 crateMovePlus = moveDirection.ToVector2();
+                    if (!grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)].IsSolid())
+                    {
+                        grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)] = Block.Crate;
+                        grid[(int)(moveTo.X), (int)moveTo.Y] = Block.Floor;
+                    }
+                    else
+                        return false;
+                }
+                if (!MainGame.IsSolid(moveToBlock))
+                {
+                    gridPos = moveTo;
+                    animTarget = gridPos * 32.0f;
+                    return true;
+                }
             }
 
             return false;
@@ -108,7 +145,7 @@ namespace SilverBotAndGuy
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(textures.Get(facing), animPos, Color.White);
+            spriteBatch.Draw(textures.Get(facing), animPos);
         }
     }
 }

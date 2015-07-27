@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="FileLoader.cs" />
     <Compile Include="GameTextures.cs" />
     <Compile Include="Graphics\Laserbeam.cs" />
@@ -61,6 +60,7 @@
     <Compile Include="Graphics\MainGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShadowMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -150,6 +150,24 @@
     <Content Include="Content\panel.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\shadow_c.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shadow_cl.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shadow_cu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shadow_l.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shadow_u.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\shadow_ul.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

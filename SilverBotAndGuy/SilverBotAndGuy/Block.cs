@@ -9,14 +9,15 @@ namespace SilverBotAndGuy
     enum Block : byte
     {
         Floor = 0x0,
-        Crate = 0x1,
-        Bomb = 0x2,
-        Panel = 0x3,
-        Wall = 0x4,
-        LaserProofWall = 0x5,
-        LaserGunRight = 0x6,
-        LaserGunDown = 0x7,
-        LaserGunLeft = 0x8,
-        LaserGunUp = 0x9
+        //0x10 or 16 is the solid bit. Anything from 0x10 to 0x1F is solid.
+        Wall = 0x10,
+        LaserProofWall = 0x11,
+        LaserGunRight = 0x12,
+        LaserGunDown = 0x13,
+        LaserGunLeft = 0x14,
+        LaserGunUp = 0x15,
+        Bomb = 0x16,
+        Panel = 0x17,
+        Crate = 0x18,
     }
 }

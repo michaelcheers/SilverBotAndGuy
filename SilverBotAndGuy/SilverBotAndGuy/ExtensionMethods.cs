@@ -11,6 +11,16 @@ namespace SilverBotAndGuy
 {
     public static class ExtensionMethods
     {
+        internal static void DrawStringCentered (this SpriteBatch spriteBatch, GraphicsDevice GraphicsDevice, SpriteFont Font, string text, Color color)
+        {
+            int x = (GraphicsDevice.Viewport.Width - (int)Font.MeasureString(text).X) / 2;
+            int y = (GraphicsDevice.Viewport.Height - (int)Font.MeasureString(text).Y) / 2;
+            spriteBatch.DrawString(Font, text, new Vector2(x, y), color);
+        }
+        internal static bool LaserPassesThrough (this Block block)
+        {
+            return !block.IsSolid() || block == Block.Wall;
+        }
         internal static bool IsSolid (this Block block)
         {
             return MainGame.IsSolid(block);

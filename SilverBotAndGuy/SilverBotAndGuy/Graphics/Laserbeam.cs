@@ -32,8 +32,42 @@ namespace SilverBotAndGuy.Graphics
 
     public class LaserbeamManager
     {
+        internal class LaserbeamManagerInternal
+        {
+            internal LaserbeamManagerInternal (LaserbeamManager laserBeamManager)
+            {
+                this.laserBeamManager = laserBeamManager;
+            }
+            LaserbeamManager laserBeamManager;
+            public List<Laserbeam> beams
+            {
+                get
+                {
+                    return laserBeamManager.beams;
+                }
+            }
+            public LaserbeamTextures textures
+            {
+                get
+                {
+                    return laserBeamManager.textures;
+                }
+            }
+        }
+        internal LaserbeamManagerInternal Internal
+        {
+            get
+            {
+                return new LaserbeamManagerInternal(this);
+            }
+        }
         LaserbeamTextures textures;
         List<Laserbeam> beams = new List<Laserbeam>();
+
+        public void Clear ()
+        {
+            beams.Clear();
+        }
 
         public LaserbeamManager(ContentManager Content)
         {

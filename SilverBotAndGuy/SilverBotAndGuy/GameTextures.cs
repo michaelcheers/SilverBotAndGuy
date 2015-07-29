@@ -11,7 +11,7 @@ namespace SilverBotAndGuy
 {
     partial class MainGame
     {
-        class GameTextures
+        internal class GameTextures
         {
             public Texture2D4D laserGun;
             public Texture2D4D dozerBot;
@@ -25,9 +25,12 @@ namespace SilverBotAndGuy
             public Texture2D wall;
             public Texture2D laserProofWall;
             public Texture2D panel;
+            public Texture2D explosion;
+            public Texture2D exit;
 
             public GameTextures(ContentManager Content)
             {
+                exit = Content.Load<Texture2D>("exit");
                 floor = Content.Load<Texture2D>("floor");
                 wall = Content.Load<Texture2D>("wall");
                 laserProofWall = Content.Load<Texture2D>("wall");
@@ -37,6 +40,7 @@ namespace SilverBotAndGuy
                 laserRight = Content.Load<Texture2D>("laser-right");
                 laserDown = Content.Load<Texture2D>("laser-down");
                 laserPulse = Content.Load<Texture2D>("laser-pulse");
+                explosion = Content.Load<Texture2D>("explosion");
                 laserGun = new Texture2D4D(Content, "lasergun");
                 dozerBot = new Texture2D4D(Content, "dozerbot");
                 silverBot = new Texture2D4D(Content, "mirrorbot");

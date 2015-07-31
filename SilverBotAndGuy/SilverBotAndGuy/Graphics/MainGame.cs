@@ -14,19 +14,19 @@ using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
-    public enum Direction4D : byte
+    public enum Direction4D : sbyte
     {
         None = 0,
         Up = 1,
         Left = 2,
-        Right = 4,
-        Down = 0x10 / 2
+        Right = -2,
+        Down = -1,
     }
 
     partial class MainGame : Game
     {
         public static SpriteFont Font;
-        static SilverBotMirrorPosition[] GetSilverBotPositions (Vector2 position)
+        internal static SilverBotMirrorPosition[] GetSilverBotPositions (Vector2 position)
         {
             return new SilverBotMirrorPosition[] {
                 new SilverBotMirrorPosition(position, Direction4D.Left, Direction4D.Up),
@@ -36,7 +36,9 @@ namespace SilverBotAndGuy
         }
         internal static void FireLaser (uint x, uint y, uint width, uint height, Direction4D direction, Block[,] grid, ContentManager Content, List<Laserbeam> lasers, uint silverBotX, uint silverBotY)
         {
-            SilverBotMirrorPosition[] positions = GetSilverBotPositions(new Vector2(silverBotX, silverBotY));
+            SilverBotMirrorPosition[] positions = new SilverBotMirrorPosition[0];
+            if (silverBotX != uint.MaxValue)
+                positions = GetSilverBotPositions(new Vector2(silverBotX, silverBotY));
             Laserbeam current = new Laserbeam(new LaserbeamTextures(Content));
             current.SetStartDirection(direction);
             Vector2 currentPosition = new Vector2(x, y) + direction.ToVector2();
@@ -140,6 +142,8 @@ namespace SilverBotAndGuy
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(StartdozerBotX, StartdozerBotY), blocks, laserManager.Internal.beams, this);
             if (silverBot)
                 this.silverBot = new PlayerAvatar(textures.silverBot, new Vector2(StartSilverBotX, StartSilverBotY), blocks, laserManager.Internal.beams, this, true);
+            else
+                this.silverBot = null;
             shadowMap = new ShadowMap(Content, blocks);
             ReloadLasers(StartSilverBotX, StartSilverBotY); 
             controlled = dozerBot;
@@ -208,7 +212,7 @@ namespace SilverBotAndGuy
 
         public static bool IsSolid(Block b)
         {
-            return b.HasFlag(Block.Wall);
+            return b.HasFlag(Block.Wall) || b == Block.Exit;
         }
 
         public Rectangle GetPosition (int x, int y)
@@ -234,6 +238,11 @@ namespace SilverBotAndGuy
                     Block current = blocks[x, y];
                     switch (current)
                     {
+                        case Block.Ice:
+                            {
+                                spriteBatch.Draw(textures.ice, GetPosition(x, y));
+                                break;
+                            }
                         case Block.Floor:
                             {
                                 spriteBatch.Draw(textures.floor, GetPosition(x, y));
@@ -290,8 +299,6 @@ namespace SilverBotAndGuy
                                 spriteBatch.Draw(textures.crate, GetPosition(x, y));
                                 break;
                             }
-                        case Block.None:
-                            break;
                     }
                 }
             }
@@ -330,9 +337,34 @@ namespace SilverBotAndGuy
             base.Draw(gameTime);
         }
         PlayerAvatar controlled;
+
+        void UpdateIce (Point position)
+        {
+            foreach (var item in laserManager.Internal.beams)
+            {
+                foreach (var item2 in item.Internal.squares)
+                {
+                    if ((item2.pos / 32) == position.ToVector2())
+                        blocks[position.X, position.Y] = Block.Floor;
+                }
+            }
+        }
+
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            for (int x = 0; x < blocks.GetLength(0); x++)
+            {
+                for (int y = 0; y < blocks.GetLength(1); y++)
+                {
+                    if (blocks[x, y] == Block.Ice)
+                    {
+                        UpdateIce(new Point(x, y));
+                    }
+                }
+            }
+
             inputState.Update();
 
             if (controlled == silverBot)
@@ -340,7 +372,12 @@ namespace SilverBotAndGuy
                 if (inputState.WasKeyJustPressed(Keys.Escape))
                     controlled = dozerBot;
                 else
-                    dozerBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right));
+                    dozerBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
+            }
+            else if (controlled == dozerBot)
+            {
+                if (silverBot != null)
+                    silverBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
             }
 
             controlled.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right));

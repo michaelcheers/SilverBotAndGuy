@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -95,6 +96,11 @@ namespace LevelCreator
                             blocks[x, y] = (byte)Block.Bomb;
                             break;
                         }
+                    case 'i':
+                        {
+                            blocks[x, y] = (byte)Block.Ice;
+                            break;
+                        }
                     case '\n':
                         {
                             x = -1;
@@ -114,6 +120,48 @@ namespace LevelCreator
             return blocks;
         }
 
+        void saveFileFunc (BinaryWriter writer)
+        {
+
+            uint width;
+            uint height;
+            uint startDozerBotX;
+            uint startDozerBotY;
+            byte[,] bytes = GetBytes(out width, out height, out startDozerBotX, out startDozerBotY);
+            if (bytes == null)
+                return;
+            byte[] resultBytes = new byte[bytes.Length];
+            Buffer.BlockCopy(bytes, 0, resultBytes, 0, resultBytes.Length);
+            bytes = null;
+            writer.Write(width);
+            writer.Write(height);
+            bool silverBot = textBox1.Text.Contains('/');
+            writer.Write(silverBot);
+            if (silverBot)
+            {
+                string[] split = textBox1.Text.Replace("\r", "").Split('\n');
+                int posOfSilverBotX = 0;
+                int posOfSilverBotY = 0;
+                while (posOfSilverBotY < height)
+                {
+                    int indexOf = split[posOfSilverBotY].IndexOf('/');
+                    if (indexOf != -1)
+                    {
+                        posOfSilverBotX = indexOf;
+                        break;
+                    }
+                    posOfSilverBotY++;
+                }
+                writer.Write(posOfSilverBotX);
+                writer.Write(posOfSilverBotY);
+            }
+            writer.Write(startDozerBotX);
+            writer.Write(startDozerBotY);
+            writer.Write(resultBytes, 0, resultBytes.Length);
+            writer.Flush();
+            writer.Close();
+        }
+
         private void saveFile_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -122,43 +170,7 @@ namespace LevelCreator
                 if (fileStream != null)
                 {
                     BinaryWriter writer = new BinaryWriter(fileStream);
-                    uint width;
-                    uint height;
-                    uint startDozerBotX;
-                    uint startDozerBotY;
-                    byte[,] bytes = GetBytes(out width, out height, out startDozerBotX, out startDozerBotY);
-                    if (bytes == null)
-                        return;
-                    byte[] resultBytes = new byte[bytes.Length];
-                    Buffer.BlockCopy(bytes, 0, resultBytes, 0, resultBytes.Length);
-                    bytes = null;
-                    writer.Write(width);
-                    writer.Write(height);
-                    bool silverBot = textBox1.Text.Contains('/');
-                    writer.Write(silverBot);
-                    if (silverBot)
-                    {
-                        string[] split = textBox1.Text.Replace("\r", "").Split('\n');
-                        int posOfSilverBotX = 0;
-                        int posOfSilverBotY = 0;
-                        while (posOfSilverBotY < height)
-                        {
-                            int indexOf = split[posOfSilverBotY].IndexOf('/');
-                            if (indexOf != -1)
-                            {
-                                posOfSilverBotX = indexOf;
-                                break;
-                            }
-                            posOfSilverBotY++;
-                        }
-                        writer.Write(posOfSilverBotX);
-                        writer.Write(posOfSilverBotY);
-                    }
-                    writer.Write(startDozerBotX);
-                    writer.Write(startDozerBotY);
-                    writer.Write(resultBytes, 0, resultBytes.Length);
-                    writer.Flush();
-                    writer.Close();
+                    saveFileFunc(writer);
                 }
             }
         }
@@ -181,6 +193,11 @@ namespace LevelCreator
                 case (Block)0xFD:
                     {
                         currentChar = '\\';
+                        break;
+                    }
+                case Block.Ice:
+                    {
+                        currentChar = 'i';
                         break;
                     }
                 case Block.Exit:
@@ -282,6 +299,16 @@ namespace LevelCreator
                     LoadBlocks(FileLoader.ReadFile(fileStream, out StartX, out StartY, out isSilverBot, out StartSilverBotX, out StartSilverBotY), StartX, StartY, isSilverBot, StartSilverBotX, StartSilverBotY);
                 }
             }
+        }
+
+        private void tryButton_Click(object sender, EventArgs e)
+        {
+            string tmpPath = Path.GetTempFileName();
+            BinaryWriter writer = new BinaryWriter(File.OpenWrite(tmpPath));
+            saveFileFunc(writer);
+            ProcessStartInfo info = new ProcessStartInfo(Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/SilverBotAndGuy.exe"), tmpPath);
+            info.WorkingDirectory = Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/");
+            Process.Start(info);
         }
     }
 }

@@ -33,6 +33,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.Load = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.tryButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -74,11 +75,23 @@
             this.openFileDialog1.DefaultExt = "sbalvl";
             this.openFileDialog1.FileName = "level.sbalvl";
             // 
+            // tryButton
+            // 
+            this.tryButton.Location = new System.Drawing.Point(1041, 74);
+            this.tryButton.Name = "tryButton";
+            this.tryButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tryButton.Size = new System.Drawing.Size(87, 23);
+            this.tryButton.TabIndex = 3;
+            this.tryButton.Text = "Try";
+            this.tryButton.UseVisualStyleBackColor = true;
+            this.tryButton.Click += new System.EventHandler(this.tryButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1170, 515);
+            this.Controls.Add(this.tryButton);
             this.Controls.Add(this.Load);
             this.Controls.Add(this.saveFile);
             this.Controls.Add(this.textBox1);
@@ -97,6 +110,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private new System.Windows.Forms.Button Load;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button tryButton;
     }
 }
 

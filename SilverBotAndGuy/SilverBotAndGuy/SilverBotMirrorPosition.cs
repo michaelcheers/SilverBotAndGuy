@@ -9,7 +9,7 @@ namespace SilverBotAndGuy
 {
     partial class MainGame
     {
-        class SilverBotMirrorPosition
+        internal class SilverBotMirrorPosition
         {
             public Direction4D d1;
             public Direction4D d2;

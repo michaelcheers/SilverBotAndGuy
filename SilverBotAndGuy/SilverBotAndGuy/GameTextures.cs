@@ -27,11 +27,13 @@ namespace SilverBotAndGuy
             public Texture2D panel;
             public Texture2D explosion;
             public Texture2D exit;
+            public Texture2D ice;
 
             public GameTextures(ContentManager Content)
             {
                 exit = Content.Load<Texture2D>("exit");
                 floor = Content.Load<Texture2D>("floor");
+                ice = Content.Load<Texture2D>("ice");
                 wall = Content.Load<Texture2D>("wall");
                 laserProofWall = Content.Load<Texture2D>("wall");
                 crate = Content.Load<Texture2D>("crate");

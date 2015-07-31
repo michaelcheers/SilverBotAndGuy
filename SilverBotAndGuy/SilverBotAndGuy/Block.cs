@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SilverBotAndGuy
+﻿namespace SilverBotAndGuy
 {
     enum Block : byte
     {
@@ -20,7 +14,8 @@ namespace SilverBotAndGuy
         Bomb = 0x16,
         Panel = 0x17,
         Crate = 0x18,
-        None = 0x19
+        None = 0x19,
+        Ice = 0x1A,
         //0xFD is reserved as reserved as "\\".
         //0xFE is reserved as reserved as "/".
         //0xFF is reserved for temporary start position.

@@ -25,6 +25,23 @@ namespace SilverBotAndGuy
         float explosionAnimStopwatch;
         bool isSilverBot;
 
+        public bool IsTouchingSilverBot (Vector2 posToCheck)
+        {
+            if (game.silverBot == null)
+                return false;
+            foreach (var item in MainGame.GetSilverBotPositions(game.silverBot.gridPos))
+            {
+                if (item == posToCheck)
+                    return true;
+            }
+            return false;
+        }
+
+        public bool IsTouchingSilverBot ()
+        {
+            return IsTouchingSilverBot(gridPos);
+        }
+
         public PlayerAvatar(Texture2D4D aTextures, Vector2 initialGridPos, Block[,] grid, IEnumerable<Laserbeam> laserBeams, MainGame game, bool isSilverBot = false)
         {
             gridPos = initialGridPos;
@@ -50,7 +67,20 @@ namespace SilverBotAndGuy
 
         public delegate void LandOnSquare(Block block, PlayerAvatar sender, Vector2 gridPos);
 
-        public void Update(Vector2 joystick)
+        void DetectLaserProblem (Vector2 moveTo)
+        {
+            foreach (var item in laserBeams)
+            {
+                Laserbeam.InternalLaserbeam Internal = item.Internal;
+                foreach (Laserbeam.LaserbeamSquare item2 in Internal.squares)
+                {
+                    if ((item2.pos / 32) == moveTo)
+                        Die();
+                }
+            }
+        }
+
+        public void Update(Vector2 joystick, bool updateTryStep = true)
         {
             Direction4D moveDirection = Direction4D.None;
             if (explosionAnimStopwatch > 0.0f)
@@ -92,7 +122,12 @@ namespace SilverBotAndGuy
             {
                 if (explosionAnimStopwatch == 0.0f)
                 {
-                    TryStep(moveDirection);
+                    Vector2 moveTo = new Vector2();
+                    if (updateTryStep)
+                    {
+                        TryStep(moveDirection, out moveTo);
+                    }
+                    DetectLaserProblem(moveTo);
                 }
             }
             else
@@ -119,7 +154,12 @@ namespace SilverBotAndGuy
 
                     if( moveDirection == facing )
                     {
-                        stepped = TryStep(moveDirection);
+                        Vector2 moveTo = new Vector2();
+                        if (updateTryStep)
+                        {
+                            stepped = TryStep(moveDirection, out moveTo);
+                        }
+                        DetectLaserProblem(moveTo);
                     }
 
                     if (!stepped)
@@ -138,8 +178,6 @@ namespace SilverBotAndGuy
             Explode();
         }
 
-        PlayerAvatar currentlyControlling;
-
         public void Explode()
         {
             explosionAnimStopwatch = 0.01f;
@@ -148,12 +186,90 @@ namespace SilverBotAndGuy
 
         public event LandOnSquare Arrive;
 
-        public bool TryStep(Direction4D moveDirection)
+        public bool Push (Vector2 position, PlayerAvatar sender)
         {
+            Point gridPosPlusPosition = (position + gridPos).ToPoint();
+            if (gridPosPlusPosition.X == grid.GetLength(0) - 1 || gridPosPlusPosition.Y == grid.GetLength(1) - 1 || gridPosPlusPosition.X == -1 ||gridPosPlusPosition.Y == -1)
+                return false;
+            if (grid[gridPosPlusPosition.X, gridPosPlusPosition.Y].IsSolid())
+                return false;
+            if (isSilverBot)
+            {
+                if (position.X > 0 || position.Y > 0)
+                {
+                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(1, 1);
+                    if (gridPosPlusPositionPlusSilverBot.X == grid.GetLength(0) - 1 || gridPosPlusPositionPlusSilverBot.Y == grid.GetLength(1) - 1)
+                        return false;
+                }
+                else if (position.X < 0 || position.Y < 0)
+                {
+                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(-1, -1);
+                    if (gridPosPlusPositionPlusSilverBot.X == -1 || gridPosPlusPositionPlusSilverBot.Y == -1)
+                        return false;
+                }
+            }
+            gridPos += position;
+            animTarget = gridPos * 32.0f;
+            return true;
+        }
+
+        //public enum BlockMovementState : byte
+        //{
+        //    Blocked = 1,
+        //    Exit = 2,
+        //    Panel = 4,
+        //    NonBlocked = 8,
+        //    SilverBotPush = 0x10,
+        //    CratePush = 0x20
+        //}
+
+        //public BlockMovementState WillCollideAt (Vector2 position)
+        //{
+        //    BlockMovementState state = (BlockMovementState)0;
+        //    Block atPosition = grid.GetElement(position);
+        //    if (atPosition.IsSolid())
+        //    {
+        //        switch (atPosition)
+        //        {
+        //            case Block.Exit:
+        //                {
+        //                    state |= BlockMovementState.Exit;
+        //                    break;
+        //                }
+        //            case Block.Panel:
+        //                {
+        //                    state |= BlockMovementState.Panel;
+        //                    break;
+        //                }
+        //            case Block.Crate:
+        //                {
+        //                    state }}
+        //            default:
+        //                {
+        //                    state |= BlockMovementState.Blocked;
+        //                    break; 
+        //                }
+        //        }
+        //        return state;
+        //    }
+
+        //    if (isSilverBot)
+        //    {
+
+        //    }
+        //    else
+        //    {
+
+        //    }
+        //}
+
+        public bool TryStep(Direction4D moveDirection, out Vector2 moveTo)
+        {
+            moveTo = new Vector2();
             if (moveDirection != Direction4D.None)
             {
                 facing = moveDirection;
-                Vector2 moveTo = moveDirection.ToVector2() + gridPos;
+                moveTo = moveDirection.ToVector2() + gridPos;
                 if (moveTo.X == -1 || moveTo.Y == -1 || moveTo.X == grid.GetLength(0) || moveTo.Y == grid.GetLength(1) || isSilverBot ? (moveTo.X == grid.GetLength(0) - 1 || moveTo.Y == grid.GetLength(1) - 1) : false)
                     return false;
                 Block moveToBlock = grid[(int)moveTo.X, (int)moveTo.Y];
@@ -167,6 +283,8 @@ namespace SilverBotAndGuy
                 if (moveToBlock == Block.Crate)
                 {
                     Vector2 crateMovePlus = moveDirection.ToVector2();
+                    if (IsTouchingSilverBot(crateMovePlus + moveTo))
+                        return false;
                     if (!grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)].IsSolid())
                     {
                         grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)] = Block.Crate;
@@ -175,23 +293,20 @@ namespace SilverBotAndGuy
                     else
                         return false;
                 }
+                if (IsTouchingSilverBot(moveTo))
+                    if (!game.silverBot.Push(moveDirection.ToVector2(), this))
+                        return false;
                 if (isSilverBot)
                     goto SkipForeach;
-                foreach (var item in laserBeams)
-                {
-                    Laserbeam.InternalLaserbeam Internal = item.Internal;
-                    foreach (Laserbeam.LaserbeamSquare item2 in Internal.squares)
-                    {
-                        if ((item2.pos / 32) == moveTo)
-                            Die();
-                    }
-                }
             SkipForeach:
-                if ((!MainGame.IsSolid(moveToBlock) || moveToBlock == Block.Panel) && (isSilverBot ? !MainGame.IsSolid(moveToBlock1XPlus) && !MainGame.IsSolid(moveToBlock1YPlus) : true))
+                if ((!MainGame.IsSolid(moveToBlock) || moveToBlock == Block.Panel || moveToBlock == Block.Exit) && (isSilverBot ? !MainGame.IsSolid(moveToBlock1XPlus) && !MainGame.IsSolid(moveToBlock1YPlus) : true))
                 {
                     gridPos = moveTo;
                     animTarget = gridPos * 32.0f;
-                    game.ReloadLasers((uint)game.silverBot.gridPos.X, (uint)game.silverBot.gridPos.Y);
+                    if (game.silverBot == null)
+                        game.ReloadLasers(uint.MaxValue, uint.MaxValue);
+                    else
+                        game.ReloadLasers((uint)game.silverBot.gridPos.X, (uint)game.silverBot.gridPos.Y);
                     return true;
                 }
             }

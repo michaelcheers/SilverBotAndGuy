@@ -11,6 +11,14 @@ namespace SilverBotAndGuy
 {
     public static class ExtensionMethods
     {
+        public static Vector2 AddFloat(this Vector2 value, float add)
+        {
+            if (value.X != 0)
+                value.X += add;
+            if (value.Y != 0)
+                value.Y += add;
+            return value;
+        }
         internal static void DrawStringCentered (this SpriteBatch spriteBatch, GraphicsDevice GraphicsDevice, SpriteFont Font, string text, Color color)
         {
             int x = (GraphicsDevice.Viewport.Width - (int)Font.MeasureString(text).X) / 2;
@@ -19,7 +27,15 @@ namespace SilverBotAndGuy
         }
         internal static bool LaserPassesThrough (this Block block)
         {
-            return !block.IsSolid() || block == Block.Wall;
+            return !block.IsSolid() || block == Block.Wall || block == Block.Ice;
+        }
+        internal static T GetElement<T> (this T[,] value, Vector2 position)
+        {
+            return value[(int)position.X, (int)position.Y];
+        }
+        internal static T GetElement<T>(this T[,] value, Point position)
+        {
+            return value[(int)position.X, (int)position.Y];
         }
         internal static bool IsSolid (this Block block)
         {

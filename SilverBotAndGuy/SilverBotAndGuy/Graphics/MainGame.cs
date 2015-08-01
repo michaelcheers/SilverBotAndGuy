@@ -61,6 +61,7 @@ namespace SilverBotAndGuy
         LaserbeamManager laserManager;
         GameTextures textures;
         PlayerAvatar dozerBot;
+        ShadowMap shadowMap;
 
         public static Random rand = new Random();
 
@@ -73,7 +74,7 @@ namespace SilverBotAndGuy
         }
         protected override void Initialize()
         {
-            blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"));
+            //blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"));
             base.Initialize();
         }
         protected override void OnExiting(object sender, EventArgs args)
@@ -89,6 +90,7 @@ namespace SilverBotAndGuy
             textures = new GameTextures(Content);
 
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(2,7));
+            shadowMap = new ShadowMap(Content);
 
             base.LoadContent();
         }
@@ -102,7 +104,7 @@ namespace SilverBotAndGuy
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            for (int x = 0; x < blocks.GetLength(0); x++)
+/*            for (int x = 0; x < blocks.GetLength(0); x++)
             {
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
@@ -121,7 +123,7 @@ namespace SilverBotAndGuy
                     }
                 }
             }
-
+            */
             for (int x = 1; x < 10; x++ )
             {
                 for (int y = 8; y < 14; y++ )
@@ -133,6 +135,7 @@ namespace SilverBotAndGuy
             spriteBatch.Draw(textures.wall, GetPosition(8, 12), Color.White);
             spriteBatch.Draw(textures.panel, GetPosition(4, 12), Color.White);
             spriteBatch.Draw(textures.crate, GetPosition(2, 12), Color.White);
+            shadowMap.Draw(spriteBatch);
 
             spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10), Color.White);
             Rectangle silverBotPos = GetPosition(5, 9);

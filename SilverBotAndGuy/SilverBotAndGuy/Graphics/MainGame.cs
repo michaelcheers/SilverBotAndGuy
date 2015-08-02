@@ -23,37 +23,8 @@ namespace SilverBotAndGuy
         Right = -2,
     }
 
-    class MainGame : Game
+    partial class MainGame : Game
     {
-        class GameTextures
-        {
-            public Texture2D4D laserGun;
-            public Texture2D4D dozerBot;
-            public Texture2D4D silverBot;
-            public Texture2D laserRight;
-            public Texture2D laserDown;
-            public Texture2D laserPulse;
-            public Texture2D crate;
-            public Texture2D bomb;
-            public Texture2D floor;
-            public Texture2D wall;
-            public Texture2D panel;
-
-            public GameTextures(ContentManager Content)
-            {
-                floor = Content.Load<Texture2D>("floor");
-                wall = Content.Load<Texture2D>("wall");
-                crate = Content.Load<Texture2D>("crate");
-                panel = Content.Load<Texture2D>("panel");
-                bomb = Content.Load<Texture2D>("bomb");
-                laserRight = Content.Load<Texture2D>("laser-right");
-                laserDown = Content.Load<Texture2D>("laser-down");
-                laserPulse = Content.Load<Texture2D>("laser-pulse");
-                laserGun = new Texture2D4D(Content, "lasergun");
-                dozerBot = new Texture2D4D(Content, "dozerbot");
-                silverBot = new Texture2D4D(Content, "mirrorbot");
-            }
-        }
         Block[,] blocks;
         InputState inputState = new InputState();
         GraphicsDeviceManager graphics;
@@ -87,6 +58,9 @@ namespace SilverBotAndGuy
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             laserManager = new LaserbeamManager(Content);
+            IEnumerable<Laserbeam> laserBeams;
+            blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"), Content, out laserBeams);
+            laserManager.AddRange(laserBeams);
             textures = new GameTextures(Content);
 
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(2,7));
@@ -109,18 +83,26 @@ namespace SilverBotAndGuy
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
                     Block current = blocks[x, y];
-                    if (current.HasFlag(Block.Crate))
-                    {
-                        spriteBatch.Draw(textures.crate, GetPosition(x, y), Color.White);
-                    }
+                    if (current.HasFlag(Block.LaserGunDown))
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Down, GetPosition(x, y));
+                    else if (current.HasFlag(Block.LaserGunUp))
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Up, GetPosition(x, y));
+                    else if (current.HasFlag(Block.LaserGunLeft))
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Left, GetPosition(x, y));
+                    else if (current.HasFlag(Block.LaserGunRight))
+                        spriteBatch.Draw(textures.laserGun, Direction4D.Right, GetPosition(x, y));
+                    else if (current.HasFlag(Block.Wall))
+                        spriteBatch.Draw(textures.wall, GetPosition(x, y));
+                    else if (current.HasFlag(Block.LaserProofWall))
+                        spriteBatch.Draw(textures.laserProofWall, GetPosition(x, y));
+                    else if (current.HasFlag(Block.Panel))
+                        spriteBatch.Draw(textures.panel, GetPosition(x, y));
+                    else if (current.HasFlag(Block.Crate))
+                        spriteBatch.Draw(textures.crate, GetPosition(x, y));
                     else if (current.HasFlag(Block.Bomb))
-                    {
-                        spriteBatch.Draw(textures.bomb, GetPosition(x, y), Color.White);
-                    }
+                        spriteBatch.Draw(textures.bomb, GetPosition(x, y));
                     else
-                    {
-                        spriteBatch.Draw(textures.floor, GetPosition(x, y), Color.White);
-                    }
+                        spriteBatch.Draw(textures.floor, GetPosition(x, y));
                 }
             }
             */
@@ -128,18 +110,18 @@ namespace SilverBotAndGuy
             {
                 for (int y = 8; y < 14; y++ )
                 {
-                    spriteBatch.Draw(textures.floor, GetPosition(x, y), Color.White);
+                    spriteBatch.Draw(textures.floor, GetPosition(x, y));
                 }
             }
-            spriteBatch.Draw(textures.wall, GetPosition(8, 11), Color.White);
-            spriteBatch.Draw(textures.wall, GetPosition(8, 12), Color.White);
-            spriteBatch.Draw(textures.panel, GetPosition(4, 12), Color.White);
-            spriteBatch.Draw(textures.crate, GetPosition(2, 12), Color.White);
+            spriteBatch.Draw(textures.wall, GetPosition(8, 11));
+            spriteBatch.Draw(textures.wall, GetPosition(8, 12));
+            spriteBatch.Draw(textures.panel, GetPosition(4, 12));
+            spriteBatch.Draw(textures.crate, GetPosition(2, 12));
             shadowMap.Draw(spriteBatch);
 
-            spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10), Color.White);
+            spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10));
             Rectangle silverBotPos = GetPosition(5, 9);
-            spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y), Color.White);
+            spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y));
 
             dozerBot.Draw(spriteBatch);
 

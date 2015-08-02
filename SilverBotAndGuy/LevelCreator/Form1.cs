@@ -19,11 +19,11 @@ namespace LevelCreator
             InitializeComponent();
         }
 
-        byte[,] GetBytes (out int width, out int height)
+        byte[,] GetBytes (out uint width, out uint height)
         {
             string[] split = textBox1.Text.Replace("\r", "").Split('\n');
-            width = split.OrderByDescending(o=>o.Length).ToArray()[0].Length;
-            height = split.Length;
+            width = (uint)(split.OrderByDescending(o=>o.Length).ToArray()[0].Length);
+            height = (uint)(split.Length);
             byte[,] blocks = new byte[width, height];
             int y = (int)(0);
             int x = (int)(0);
@@ -31,6 +31,41 @@ namespace LevelCreator
             {
                 switch (c)
                 {
+                    case 'r':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunRight;
+                            break;
+                        }
+                    case 'l':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunLeft;
+                            break;
+                        }
+                    case 'u':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunUp;
+                            break;
+                        }
+                    case 'd':
+                        {
+                            blocks[x, y] = (byte)Block.LaserGunDown;
+                            break;
+                        }
+                    case 'w':
+                        {
+                            blocks[x, y] = (byte)Block.Wall;
+                            break;
+                        }
+                    case '#':
+                        {
+                            blocks[x, y] = (byte)Block.LaserProofWall;
+                            break;
+                        }
+                    case 'p':
+                        {
+                            blocks[x, y] = (byte)Block.Panel;
+                            break;
+                        }
                     case 'c':
                         {
                             blocks[x, y] = (byte)Block.Crate;
@@ -73,13 +108,13 @@ namespace LevelCreator
                 if (fileStream != null)
                 {
                     BinaryWriter writer = new BinaryWriter(fileStream);
-                    int width;
-                    int height;
+                    uint width;
+                    uint height;
                     byte[,] bytes = GetBytes(out width, out height);
                     if (bytes == null)
                         return;
-                    byte[] resultBytes = new byte[bytes.Length + 8];
-                    Buffer.BlockCopy(bytes, 0, resultBytes, 8, bytes.Length);
+                    byte[] resultBytes = new byte[bytes.Length];
+                    Buffer.BlockCopy(bytes, 0, resultBytes, 0, resultBytes.Length);
                     writer.Write(width);
                     writer.Write(height);
                     writer.Write(resultBytes, 0, resultBytes.Length);

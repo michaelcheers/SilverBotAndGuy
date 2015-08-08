@@ -30,6 +30,11 @@ namespace SilverBotAndGuy
             this.grid = grid;
         }
 
+        public bool CastsShadow(Block b)
+        {
+            return (b & Block.Wall) != 0;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             for(int x = 0; x < grid.GetLength(0); x++ )
@@ -43,7 +48,6 @@ namespace SilverBotAndGuy
                     textureId += (x > 0 && (grid[x - 1, y]).CastsShadows()) ? 1 : 0; // left side
                     textureId += (y > 0 && (grid[x, y - 1]).CastsShadows()) ? 2 : 0; // top side
                     textureId += (x > 0 && y > 0 && (grid[x - 1, y - 1]).CastsShadows()) ? 4 : 0; // top left corner
-
                     Texture2D shadowTexture = null;
                     switch(textureId)
                     {
@@ -60,6 +64,7 @@ namespace SilverBotAndGuy
                     if( shadowTexture != null )
                     {
                         spriteBatch.Draw(shadowTexture, new Rectangle(x * MainGame.widthOfBlock, y * MainGame.heightOfBlock, 32, 32), Color.White);
+                        spriteBatch.Draw(shadowTexture, new Rectangle(x * 32, y * 32 + 288, 32, 32), Color.White);
                     }
                 }
             }

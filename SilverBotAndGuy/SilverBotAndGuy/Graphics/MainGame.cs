@@ -188,6 +188,7 @@ namespace SilverBotAndGuy
         protected override void Initialize()
         {
             graphics.ToggleFullScreen();
+            //blocks = FileLoader.ReadFile(File.OpenRead("blocks.sbalvl"));
             base.Initialize();
         }
         protected override void OnExiting(object sender, EventArgs args)
@@ -231,7 +232,7 @@ namespace SilverBotAndGuy
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            for (int x = 0; x < blocks.GetLength(0); x++)
+/*            for (int x = 0; x < blocks.GetLength(0); x++)
             {
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
@@ -305,7 +306,7 @@ namespace SilverBotAndGuy
 
             shadowMap.Draw(spriteBatch);
 
-            /*for (int x = 1; x < 10; x++ )
+            for (int x = 1; x < 10; x++ )
             {
                 for (int y = 8; y < 14; y++ )
                 {
@@ -316,6 +317,7 @@ namespace SilverBotAndGuy
             spriteBatch.Draw(textures.wall, GetPosition(8, 12));
             spriteBatch.Draw(textures.panel, GetPosition(4, 12));
             spriteBatch.Draw(textures.crate, GetPosition(2, 12));
+            shadowMap.Draw(spriteBatch);
 
             spriteBatch.Draw(textures.laserGun.Get(Direction4D.Right), GetPosition(2, 10));*/
             //Rectangle silverBotPos = GetPosition(5, 9);

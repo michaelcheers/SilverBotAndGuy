@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
@@ -26,7 +21,8 @@ namespace SilverBotAndGuy
                     return d2;
                 if (value == d2)
                     return d1;
-                throw new ArgumentException(value + " is not valid.");
+                //throw new ArgumentException(value + " is not valid.");
+                return Direction4D.None;
             }
             public static implicit operator Vector2 (SilverBotMirrorPosition value)
             {

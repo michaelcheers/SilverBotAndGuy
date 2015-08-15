@@ -19,6 +19,37 @@ namespace SilverBotAndGuy
                 value.Y += add;
             return value;
         }
+        internal static PlayerAvatar.BlockMovementState GetMovementState (this Block block)
+        {
+            PlayerAvatar.BlockMovementState state = 0;
+            if (block.IsSolid())
+            {
+                switch (block)
+                {
+                    case Block.Exit:
+                        {
+                            state |= PlayerAvatar.BlockMovementState.Exit;
+                            break;
+                        }
+                    case Block.Panel:
+                        {
+                            state |= PlayerAvatar.BlockMovementState.Panel;
+                            break;
+                        }
+                    case Block.Crate:
+                        {
+                            state |= PlayerAvatar.BlockMovementState.CratePush;
+                            break;
+                        }
+                    default:
+                        {
+                            state |= PlayerAvatar.BlockMovementState.Blocked;
+                            break;
+                        }
+                }
+            }
+            return state;
+        }
         internal static void DrawStringCentered (this SpriteBatch spriteBatch, GraphicsDevice GraphicsDevice, SpriteFont Font, string text, Color color)
         {
             int x = (GraphicsDevice.Viewport.Width - (int)Font.MeasureString(text).X) / 2;

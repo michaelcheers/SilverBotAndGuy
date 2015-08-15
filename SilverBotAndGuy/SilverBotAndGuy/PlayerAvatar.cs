@@ -3,10 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using SilverBotAndGuy.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
@@ -52,20 +48,20 @@ namespace SilverBotAndGuy
             this.grid = grid;
             this.laserBeams = laserBeams;
             this.game = game;
-            this.explosionTexture = game.textures.explosion;
+            explosionTexture = game.textures.explosion;
             Arrive += PlayerAvatar_Arrive;
             this.isSilverBot = isSilverBot;
         }
 
-        void PlayerAvatar_Arrive(Block block, PlayerAvatar sender, Vector2 gridPos)
+        void PlayerAvatar_Arrive(List<Block> blocksOn, PlayerAvatar sender, Vector2 gridPos)
         {
-            if (block == Block.Exit)
+            if (blocksOn.Contains(Block.Exit))
             {
                 game.DrawWin(this);
             }
         }
 
-        public delegate void LandOnSquare(Block block, PlayerAvatar sender, Vector2 gridPos);
+        public delegate void LandOnSquare(List<Block> blocksOn, PlayerAvatar sender, Vector2 gridPos);
 
         void DetectLaserProblem (Vector2 moveTo)
         {
@@ -167,7 +163,23 @@ namespace SilverBotAndGuy
                         animVel = Vector2.Zero;
                         animPos = animTarget;
                         if (Arrive != null)
-                            Arrive(grid[(int)gridPos.X, (int)gridPos.Y], this, gridPos);
+                        {
+                            List<MainGame.SilverBotMirrorPosition> on;
+                            if (isSilverBot)
+                            {
+                                on = new List<MainGame.SilverBotMirrorPosition>(MainGame.GetSilverBotPositions(gridPos));
+                            }
+                            else
+                            {
+                                on = new List<MainGame.SilverBotMirrorPosition>() {new MainGame.SilverBotMirrorPosition(gridPos, Direction4D.None, Direction4D.None) };
+                            }
+                            List<Block> blocks = new List<Block>();
+                            foreach (var item in on)
+                            {
+                                blocks.Add(grid.GetElement(item));
+                            }
+                            Arrive(blocks, this, gridPos);
+                        }
                     }
                 }
             }
@@ -213,57 +225,36 @@ namespace SilverBotAndGuy
             return true;
         }
 
-        //public enum BlockMovementState : byte
-        //{
-        //    Blocked = 1,
-        //    Exit = 2,
-        //    Panel = 4,
-        //    NonBlocked = 8,
-        //    SilverBotPush = 0x10,
-        //    CratePush = 0x20
-        //}
+        public enum BlockMovementState : byte
+        {
+            Blocked = 1,
+            Exit = 2,
+            Panel = 4,
+            NonBlocked = 8,
+            SilverBotPush = 0x10,
+            CratePush = 0x20
+        }
 
-        //public BlockMovementState WillCollideAt (Vector2 position)
-        //{
-        //    BlockMovementState state = (BlockMovementState)0;
-        //    Block atPosition = grid.GetElement(position);
-        //    if (atPosition.IsSolid())
-        //    {
-        //        switch (atPosition)
-        //        {
-        //            case Block.Exit:
-        //                {
-        //                    state |= BlockMovementState.Exit;
-        //                    break;
-        //                }
-        //            case Block.Panel:
-        //                {
-        //                    state |= BlockMovementState.Panel;
-        //                    break;
-        //                }
-        //            case Block.Crate:
-        //                {
-        //                    state }}
-        //            default:
-        //                {
-        //                    state |= BlockMovementState.Blocked;
-        //                    break; 
-        //                }
-        //        }
-        //        return state;
-        //    }
+        public BlockMovementState WillCollideAt(Vector2 position)
+        {
+            Block atPosition = grid.GetElement(position);
+            BlockMovementState state = 0;
+            if (isSilverBot)
+            {
+                var poses = MainGame.GetSilverBotPositions(position);
+                foreach (var item in poses)
+                {
+                    state |= grid.GetElement(item).GetMovementState();
+                }
+            }
+            else
+            {
+                state |= atPosition.GetMovementState();
+            }
+            return state;
+        }
 
-        //    if (isSilverBot)
-        //    {
-
-        //    }
-        //    else
-        //    {
-
-        //    }
-        //}
-
-        public bool TryStep(Direction4D moveDirection, out Vector2 moveTo)
+    public bool TryStep(Direction4D moveDirection, out Vector2 moveTo)
         {
             moveTo = new Vector2();
             if (moveDirection != Direction4D.None)

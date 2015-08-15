@@ -8,9 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
@@ -150,9 +147,9 @@ namespace SilverBotAndGuy
             dozerBot.Arrive += dozerBot_Arrive;
         }
 
-        void dozerBot_Arrive(Block block, PlayerAvatar sender, Vector2 gridPos)
+        void dozerBot_Arrive(List<Block> blocks, PlayerAvatar sender, Vector2 gridPos)
         {
-            if (block == Block.Panel)
+            if (blocks.Contains(Block.Panel))
             {
                 controlled = silverBot;
             }
@@ -232,7 +229,7 @@ namespace SilverBotAndGuy
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-/*            for (int x = 0; x < blocks.GetLength(0); x++)
+            for (int x = 0; x < blocks.GetLength(0); x++)
             {
                 for (int y = 0; y < blocks.GetLength(1); y++)
                 {
@@ -306,9 +303,10 @@ namespace SilverBotAndGuy
 
             shadowMap.Draw(spriteBatch);
 
-            for (int x = 1; x < 10; x++ )
+            /*
+            for (int x = 1; x < 10; x++)
             {
-                for (int y = 8; y < 14; y++ )
+                for (int y = 8; y < 14; y++)
                 {
                     spriteBatch.Draw(textures.floor, GetPosition(x, y));
                 }

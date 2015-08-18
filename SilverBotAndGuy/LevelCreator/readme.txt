@@ -7,3 +7,4 @@ b is a bomb.
 s is start position.
 /\
 \/ is silver bot start position.
+Made a levels folder to put the levels in (use build action none and copy if newer).

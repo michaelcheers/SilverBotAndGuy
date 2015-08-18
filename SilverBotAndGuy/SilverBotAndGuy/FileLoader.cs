@@ -9,11 +9,12 @@ namespace SilverBotAndGuy
 {
     static class FileLoader
     {
-        internal static Block[,] ReadFile (Stream stream, out uint startDozerBotX, out uint startDozerBotY, out bool silverBot, out uint silverBotX, out uint silverBotY)
+        internal static Block[,] ReadFile (Stream stream, out System.Version version, out uint startDozerBotX, out uint startDozerBotY, out bool silverBot, out uint silverBotX, out uint silverBotY)
         {
             silverBotX = default(uint);
             silverBotY = default(uint);
             BinaryReader reader = new BinaryReader(stream);
+            version = reader.ReadVersion();
             uint width = reader.ReadUInt32();
             uint height = reader.ReadUInt32();
             bool isSilverBot = reader.ReadBoolean();

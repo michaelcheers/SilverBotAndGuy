@@ -125,7 +125,10 @@ namespace SilverBotAndGuy
         {
             LoadLevel("Levels/" + currentLevel + ".sbalvl");
         }
+
         internal PlayerAvatar silverBot = null;
+        System.Version version;
+
         public void LoadLevel (string location)
         {
             uint StartdozerBotX;
@@ -133,7 +136,7 @@ namespace SilverBotAndGuy
             bool silverBot;
             uint StartSilverBotX;
             uint StartSilverBotY;
-            blocks = FileLoader.ReadFile(File.OpenRead(location), out StartdozerBotX, out StartdozerBotY, out silverBot, out StartSilverBotX, out StartSilverBotY);
+            blocks = FileLoader.ReadFile(File.OpenRead(location), out version, out StartdozerBotX, out StartdozerBotY, out silverBot, out StartSilverBotX, out StartSilverBotY);
             laserManager =
                 new LaserbeamManager(Content);
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(StartdozerBotX, StartdozerBotY), blocks, laserManager.Internal.beams, this);

@@ -1,14 +1,9 @@
 ﻿using SilverBotAndGuy;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LevelCreator
@@ -119,6 +114,8 @@ namespace LevelCreator
             }
             return blocks;
         }
+        
+        System.Version version = SilverBotAndGuy.Version.Current;
 
         void saveFileFunc (BinaryWriter writer)
         {
@@ -133,6 +130,7 @@ namespace LevelCreator
             byte[] resultBytes = new byte[bytes.Length];
             Buffer.BlockCopy(bytes, 0, resultBytes, 0, resultBytes.Length);
             bytes = null;
+            writer.Write(SilverBotAndGuy.Version.Current);
             writer.Write(width);
             writer.Write(height);
             bool silverBot = textBox1.Text.Contains('/');
@@ -164,7 +162,7 @@ namespace LevelCreator
 
         private void saveFile_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Stream fileStream = saveFileDialog1.OpenFile();
                 if (fileStream != null)
@@ -296,7 +294,7 @@ namespace LevelCreator
                     bool isSilverBot;
                     uint StartSilverBotX;
                     uint StartSilverBotY;
-                    LoadBlocks(FileLoader.ReadFile(fileStream, out StartX, out StartY, out isSilverBot, out StartSilverBotX, out StartSilverBotY), StartX, StartY, isSilverBot, StartSilverBotX, StartSilverBotY);
+                    LoadBlocks(FileLoader.ReadFile(fileStream, out version, out StartX, out StartY, out isSilverBot, out StartSilverBotX, out StartSilverBotY), StartX, StartY, isSilverBot, StartSilverBotX, StartSilverBotY);
                 }
             }
         }

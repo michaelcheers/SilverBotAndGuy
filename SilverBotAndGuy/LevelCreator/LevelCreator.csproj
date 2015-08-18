@@ -50,6 +50,9 @@
     <Compile Include="..\SilverBotAndGuy\FileLoader.cs">
       <Link>FileLoader.cs</Link>
     </Compile>
+    <Compile Include="..\SilverBotAndGuy\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

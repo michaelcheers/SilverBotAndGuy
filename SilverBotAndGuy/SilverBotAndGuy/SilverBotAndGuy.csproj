@@ -87,7 +87,9 @@
     <None Include="Levels\7.sbalvl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Levels\8.sbalvl" />
+    <None Include="Levels\8.sbalvl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\crate.jpg">

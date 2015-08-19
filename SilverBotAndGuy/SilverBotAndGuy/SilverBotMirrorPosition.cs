@@ -22,7 +22,7 @@ namespace SilverBotAndGuy
                 if (value == d2)
                     return d1;
                 //throw new ArgumentException(value + " is not valid.");
-                return Direction4D.None;
+                return Mirror(value.Reverse());
             }
             public static implicit operator Vector2 (SilverBotMirrorPosition value)
             {

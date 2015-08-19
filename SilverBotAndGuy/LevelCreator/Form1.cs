@@ -284,7 +284,7 @@ namespace LevelCreator
 
         private void Load_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Stream fileStream = openFileDialog1.OpenFile();
                 if (fileStream != null)

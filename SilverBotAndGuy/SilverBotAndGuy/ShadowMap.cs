@@ -58,8 +58,7 @@ namespace SilverBotAndGuy
 
                     if( shadowTexture != null )
                     {
-                        spriteBatch.Draw(shadowTexture, new Rectangle(x * MainGame.widthOfBlock, y * MainGame.heightOfBlock, 32, 32), Color.White);
-                        spriteBatch.Draw(shadowTexture, new Rectangle(x * 32, y * 32 + 288, 32, 32), Color.White);
+                        spriteBatch.Draw(shadowTexture, new Rectangle(x * MainGame.widthOfBlock, y * MainGame.heightOfBlock, MainGame.widthOfBlock, MainGame.heightOfBlock), Color.White);
                     }
                 }
             }

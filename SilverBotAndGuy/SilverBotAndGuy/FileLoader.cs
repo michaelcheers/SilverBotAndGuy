@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO.Compression;
 
 namespace SilverBotAndGuy
 {
@@ -13,7 +14,7 @@ namespace SilverBotAndGuy
         {
             silverBotX = default(uint);
             silverBotY = default(uint);
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new BinaryReader(new DeflateStream(stream, CompressionMode.Decompress));
             version = reader.ReadVersion();
             uint width = reader.ReadUInt32();
             uint height = reader.ReadUInt32();
@@ -31,11 +32,11 @@ namespace SilverBotAndGuy
             {
                 for (uint y = 0; y < height; y++)
                 {
-                    Block current = (Block)stream.ReadByte();
+                    Block current = (Block)reader.ReadByte();
                     result[x, y] = current;
                 }
             }
-            stream.Close();
+            reader.Close();
             return result;
         }
     }

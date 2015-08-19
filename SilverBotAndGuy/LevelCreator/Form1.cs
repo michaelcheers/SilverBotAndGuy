@@ -3,6 +3,7 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -117,9 +118,10 @@ namespace LevelCreator
         
         System.Version version = SilverBotAndGuy.Version.Current;
 
-        void saveFileFunc (BinaryWriter writer)
+        void saveFileFunc (Stream stream)
         {
-
+            var gStream = new DeflateStream(stream, CompressionLevel.Optimal);
+            BinaryWriter writer = new BinaryWriter(gStream);
             uint width;
             uint height;
             uint startDozerBotX;
@@ -167,8 +169,7 @@ namespace LevelCreator
                 Stream fileStream = saveFileDialog1.OpenFile();
                 if (fileStream != null)
                 {
-                    BinaryWriter writer = new BinaryWriter(fileStream);
-                    saveFileFunc(writer);
+                    saveFileFunc(fileStream);
                 }
             }
         }
@@ -302,8 +303,7 @@ namespace LevelCreator
         private void tryButton_Click(object sender, EventArgs e)
         {
             string tmpPath = Path.GetTempFileName();
-            BinaryWriter writer = new BinaryWriter(File.OpenWrite(tmpPath));
-            saveFileFunc(writer);
+            saveFileFunc(File.OpenWrite(tmpPath));
             ProcessStartInfo info = new ProcessStartInfo(Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/SilverBotAndGuy.exe"), tmpPath);
             info.WorkingDirectory = Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/");
             Process.Start(info);

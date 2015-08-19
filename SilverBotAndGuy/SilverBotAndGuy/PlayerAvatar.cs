@@ -261,7 +261,7 @@ namespace SilverBotAndGuy
             {
                 facing = moveDirection;
                 moveTo = moveDirection.ToVector2() + gridPos;
-                if (moveTo.X == -1 || moveTo.Y == -1 || moveTo.X == grid.GetLength(0) || moveTo.Y == grid.GetLength(1) || isSilverBot ? (moveTo.X == grid.GetLength(0) - 1 || moveTo.Y == grid.GetLength(1) - 1) : false)
+                if (moveTo.X < 0 || moveTo.Y < 0 || moveTo.X >= grid.GetLength(0) || moveTo.Y >= grid.GetLength(1) || (isSilverBot ? (moveTo.X == grid.GetLength(0) - 1 || (moveTo.Y == grid.GetLength(1) - 1)) : false))
                     return false;
                 Block moveToBlock = grid[(int)moveTo.X, (int)moveTo.Y];
                 Block moveToBlock1XPlus = default(Block);

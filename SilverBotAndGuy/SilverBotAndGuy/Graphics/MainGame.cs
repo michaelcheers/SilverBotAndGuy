@@ -43,9 +43,9 @@ namespace SilverBotAndGuy
             {
                 if (currentPosition.X == -1 || currentPosition.Y == -1)
                     break;
-                if (currentPosition.X == width - 1)
+                if (currentPosition.X == width)
                     break;
-                if (currentPosition.Y == height - 1)
+                if (currentPosition.Y == height)
                     break;
                 foreach (var item in positions)
                 {

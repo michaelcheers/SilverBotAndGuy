@@ -198,30 +198,49 @@ namespace SilverBotAndGuy
 
         public event LandOnSquare Arrive;
 
-        public bool Push (Vector2 position, PlayerAvatar sender)
+        public bool Push(Direction4D direction, PlayerAvatar sender)
         {
-            Point gridPosPlusPosition = (position + gridPos).ToPoint();
-            if (gridPosPlusPosition.X == grid.GetLength(0) - 1 || gridPosPlusPosition.Y == grid.GetLength(1) - 1 || gridPosPlusPosition.X == -1 ||gridPosPlusPosition.Y == -1)
-                return false;
-            if (grid[gridPosPlusPosition.X, gridPosPlusPosition.Y].IsSolid())
-                return false;
+            Vector2 offset = direction.ToVector2();
+            Point position = (gridPos + offset).ToPoint();
+
             if (isSilverBot)
             {
-                if (position.X > 0 || position.Y > 0)
+                if (!IsPositionFree(position))
+                    return false;
+                if (!IsPositionFree(position + new Point(1,0)))
+                    return false;
+                if (!IsPositionFree(position + new Point(0,1)))
+                    return false;
+                if (!IsPositionFree(position + new Point(1,1)))
+                    return false;
+            }
+            else
+            {
+                if (!IsPositionFree(position))
+                    return false;
+
+                if( position.X == game.silverBot.gridPos.X || position.X == game.silverBot.gridPos.X+1 )
                 {
-                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(1, 1);
-                    if (gridPosPlusPositionPlusSilverBot.X == grid.GetLength(0) - 1 || gridPosPlusPositionPlusSilverBot.Y == grid.GetLength(1) - 1)
+                    if( position.Y == game.silverBot.gridPos.Y || position.Y == game.silverBot.gridPos.Y+1 )
+                    {
+                        //can't push a crate into silverbot
                         return false;
-                }
-                else if (position.X < 0 || position.Y < 0)
-                {
-                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(-1, -1);
-                    if (gridPosPlusPositionPlusSilverBot.X == -1 || gridPosPlusPositionPlusSilverBot.Y == -1)
-                        return false;
+                    }
                 }
             }
-            gridPos += position;
+
+            gridPos += offset;
             animTarget = gridPos * 32.0f;
+            return true;
+        }
+
+        public bool IsPositionFree(Point position)
+        {
+            if (position.X == grid.GetLength(0) - 1 || position.Y == grid.GetLength(1) - 1 || position.X == -1 || position.Y == -1)
+                return false;
+            if (grid[position.X, position.Y].IsSolid())
+                return false;
+
             return true;
         }
 
@@ -285,7 +304,7 @@ namespace SilverBotAndGuy
                         return false;
                 }
                 if (IsTouchingSilverBot(moveTo))
-                    if (!game.silverBot.Push(moveDirection.ToVector2(), this))
+                    if (!game.silverBot.Push(moveDirection, this))
                         return false;
                 if (isSilverBot)
                     goto SkipForeach;

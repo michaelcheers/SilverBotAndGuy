@@ -30,7 +30,7 @@ namespace SilverBotAndGuy
             return (b & Block.Wall) != 0;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Vector2 cameraPos)
         {
             for (int x = 0; x < grid.GetLength(0); x++ )
             {
@@ -58,7 +58,16 @@ namespace SilverBotAndGuy
 
                     if( shadowTexture != null )
                     {
-                        spriteBatch.Draw(shadowTexture, new Rectangle(x * MainGame.widthOfBlock, y * MainGame.heightOfBlock, MainGame.widthOfBlock, MainGame.heightOfBlock), Color.White);
+                        spriteBatch.Draw
+                        (
+                          shadowTexture,
+                          new Rectangle(
+                            (int)((x * MainGame.widthOfBlock) - cameraPos.X),
+                            (int)((y * MainGame.heightOfBlock) - cameraPos.Y),
+                            MainGame.widthOfBlock,
+                            MainGame.heightOfBlock
+                          ),
+                          Color.White);
                     }
                 }
             }

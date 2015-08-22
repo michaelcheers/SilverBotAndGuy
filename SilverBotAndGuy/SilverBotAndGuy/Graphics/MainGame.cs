@@ -31,12 +31,12 @@ namespace SilverBotAndGuy
                 new SilverBotMirrorPosition(position + new Vector2(0, 1), Direction4D.Down, Direction4D.Left),
                 new SilverBotMirrorPosition(position + new Vector2(1), Direction4D.Right, Direction4D.Down)};
         }
-        internal static void FireLaser (uint x, uint y, uint width, uint height, Direction4D direction, Block[,] grid, ContentManager Content, List<Laserbeam> lasers, uint silverBotX, uint silverBotY)
+        internal void FireLaser (uint x, uint y, uint width, uint height, Direction4D direction, Block[,] grid, ContentManager Content, LaserbeamManager laserManager, ref int laserIndex)
         {
-            SilverBotMirrorPosition[] positions = new SilverBotMirrorPosition[0];
-            if (silverBotX != uint.MaxValue)
-                positions = GetSilverBotPositions(new Vector2(silverBotX, silverBotY));
-            Laserbeam current = new Laserbeam(new LaserbeamTextures(Content));
+            SilverBotMirrorPosition[] mirrorPositions = new SilverBotMirrorPosition[0];
+            if (silverBot != null)
+                mirrorPositions = GetSilverBotPositions(new Vector2(silverBot.gridPos.X, silverBot.gridPos.Y));
+            Laserbeam current = laserManager.GetBeam(laserIndex);
             current.SetStartDirection(direction);
             Vector2 currentPosition = new Vector2(x, y) + direction.ToVector2();
             while(true)
@@ -47,11 +47,11 @@ namespace SilverBotAndGuy
                     break;
                 if (currentPosition.Y == height)
                     break;
-                foreach (var item in positions)
+                foreach (var mirror in mirrorPositions)
                 {
-                    if (item == currentPosition)
+                    if (mirror == currentPosition)
                     {
-                        direction = item.Mirror(direction.Reverse());
+                        direction = mirror.Mirror(direction.Reverse());
                         break;
                     }
                 }
@@ -65,30 +65,31 @@ namespace SilverBotAndGuy
                     break;
                 }
             }
-            lasers.Add(current);
+            current.SetEndDirection(direction);
+            laserIndex++;
         }
-        internal static void LoadLasers(uint x, uint y, uint width, uint height, Block current, ContentManager Content, Block[,] grid, List<Laserbeam> lasersList, uint silverBotX, uint silverBotY)
+        internal void LoadLasers(uint x, uint y, uint width, uint height, Block current, ContentManager Content, Block[,] grid, LaserbeamManager laserManager, ref int laserIndex )
         {
             switch (current)
             {
                 case Block.LaserGunRight:
                     {
-                        FireLaser(x, y, width, height, Direction4D.Right, grid, Content, lasersList, silverBotX, silverBotY);
+                        FireLaser(x, y, width, height, Direction4D.Right, grid, Content, laserManager, ref laserIndex);
                         return;
                     }
                 case Block.LaserGunDown:
                     {
-                        FireLaser(x, y, width, height, Direction4D.Down, grid, Content, lasersList, silverBotX, silverBotY);
+                        FireLaser(x, y, width, height, Direction4D.Down, grid, Content, laserManager, ref laserIndex);
                         return;
                     }
                 case Block.LaserGunLeft:
                     {
-                        FireLaser(x, y, width, height, Direction4D.Left, grid, Content, lasersList, silverBotX, silverBotY);
+                        FireLaser(x, y, width, height, Direction4D.Left, grid, Content, laserManager, ref laserIndex);
                         return;
                     }
                 case Block.LaserGunUp:
                     {
-                        FireLaser(x, y, width, height, Direction4D.Up, grid, Content, lasersList, silverBotX, silverBotY);
+                        FireLaser(x, y, width, height, Direction4D.Up, grid, Content, laserManager, ref laserIndex);
                         return;
                     }
             }
@@ -102,19 +103,18 @@ namespace SilverBotAndGuy
                 won = true;
             }
         }
-        public void ReloadLasers (uint silverBotPositionX, uint silverBotPositionY)
+        public void ReloadLasers ()
         {
             laserManager.Clear();
-            List<Laserbeam> lasersBeams = new List<Laserbeam>();
+            int laserIndex = 0;
             for (uint x = 0; x < blocks.GetLength(0); x++)
             {
                 for (uint y = 0; y < blocks.GetLength(1); y++)
                 {
                     Block current = blocks[x, y];
-                    LoadLasers(x, y, (uint)blocks.GetLength(0), (uint)blocks.GetLength(1), current, Content, blocks, lasersBeams, silverBotPositionX, silverBotPositionY);
+                    LoadLasers(x, y, (uint)blocks.GetLength(0), (uint)blocks.GetLength(1), current, Content, blocks, laserManager, ref laserIndex);
                 }
             }
-            laserManager.AddRange(lasersBeams);
         }
         public void RestartLevel ()
         {
@@ -145,7 +145,7 @@ namespace SilverBotAndGuy
             else
                 this.silverBot = null;
             shadowMap = new ShadowMap(Content, blocks);
-            ReloadLasers(StartSilverBotX, StartSilverBotY); 
+            ReloadLasers(); 
             controlled = dozerBot;
             dozerBot.Arrive += dozerBot_Arrive;
         }
@@ -165,6 +165,8 @@ namespace SilverBotAndGuy
         internal GameTextures textures;
         PlayerAvatar dozerBot;
         ShadowMap shadowMap;
+        Vector2 cameraPos = new Vector2(-5*32, -5*32);
+        List<PushAnim> pushAnims = new List<PushAnim>();
 
         public static Random rand = new Random();
         bool won;
@@ -218,7 +220,11 @@ namespace SilverBotAndGuy
 
         public Rectangle GetPosition (int x, int y)
         {
-            return new Rectangle(x * widthOfBlock, y * heightOfBlock, widthOfBlock, heightOfBlock);
+            return new Rectangle((int)((x * widthOfBlock) - cameraPos.X),
+                (int)((y * heightOfBlock) - cameraPos.Y),
+                widthOfBlock,
+                heightOfBlock
+            );
         }
         public void LoadNextLevel()
         {
@@ -231,6 +237,15 @@ namespace SilverBotAndGuy
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            if (controlled != null)
+            {
+                cameraPos = new Vector2(
+                    (float)Math.Floor(controlled.animPos.X - graphics.GraphicsDevice.Viewport.Width * 0.5f),
+                    (float)Math.Floor(controlled.animPos.Y - graphics.GraphicsDevice.Viewport.Height * 0.5f)
+                );
+            }
+
             spriteBatch.Begin();
             for (int x = 0; x < blocks.GetLength(0); x++)
             {
@@ -297,14 +312,30 @@ namespace SilverBotAndGuy
                         case Block.Crate:
                             {
                                 spriteBatch.Draw(textures.floor, GetPosition(x, y));
-                                spriteBatch.Draw(textures.crate, GetPosition(x, y));
+                                bool isAnimating = false;
+                                foreach (PushAnim anim in pushAnims)
+                                {
+                                    if(x == anim.destinationGridPos.X && y == anim.destinationGridPos.Y)
+                                    {
+                                        isAnimating = true;
+                                        break;
+                                    }
+                                }
+
+                                if( !isAnimating )
+                                    spriteBatch.Draw(textures.crate, GetPosition(x, y));
                                 break;
                             }
                     }
                 }
             }
 
-            shadowMap.Draw(spriteBatch);
+            foreach(PushAnim anim in pushAnims)
+            {
+                anim.Draw(spriteBatch, cameraPos);
+            }
+
+            shadowMap.Draw(spriteBatch, cameraPos);
 
             /*
             for (int x = 1; x < 10; x++)
@@ -324,13 +355,15 @@ namespace SilverBotAndGuy
             //Rectangle silverBotPos = GetPosition(5, 9);
             //spriteBatch.Draw(textures.silverBot.Get(botDirection), new Vector2(silverBotPos.X, silverBotPos.Y));
 
-            dozerBot.Draw(spriteBatch);
+            dozerBot.Draw(spriteBatch, cameraPos);
+            
+            laserManager.Draw(spriteBatch, cameraPos);
+
             if (silverBot != null)
             {
-                silverBot.Draw(spriteBatch);
+                silverBot.Draw(spriteBatch, cameraPos);
             }
 
-            laserManager.Draw(spriteBatch);
             if (won)
             {
                 const string winText = "You Won!";
@@ -385,6 +418,28 @@ namespace SilverBotAndGuy
 
             controlled.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right));
             laserManager.Update();
+
+            for (int Idx = 0; Idx < pushAnims.Count; )
+            {
+                if (pushAnims[Idx].Finished())
+                {
+                    pushAnims.RemoveAt(Idx);
+                }
+                else
+                {
+                    Idx++;
+                }
+            }
+        }
+
+        internal void AddPushAnim(Block block, Point destination, PlayerAvatar pusher, Direction4D moveDirection)
+        {
+            switch(block)
+            {
+                case Block.Crate:
+                    pushAnims.Add( new PushAnim(textures.crate, pusher, moveDirection.ToVector2() * widthOfBlock, destination) );
+                    break;
+            }
         }
     }
 }

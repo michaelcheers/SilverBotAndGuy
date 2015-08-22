@@ -324,8 +324,15 @@ namespace LevelCreator
             info.WorkingDirectory = Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/");
             Process.Start(info).WaitForExit();
             File.Delete(tmp1);
-            BinaryReader reader = new BinaryReader(File.OpenRead(tmp2));
-            solutions.Add(reader.ReadDoubleByteArray());
+            try
+            {
+                BinaryReader reader = new BinaryReader(File.OpenRead(tmp2));
+                solutions.Add(reader.ReadDoubleByteArray());
+            }
+            catch (Exception)
+            {
+                
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

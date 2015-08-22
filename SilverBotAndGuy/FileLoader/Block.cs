@@ -1,6 +1,6 @@
 ﻿namespace SilverBotAndGuy
 {
-    enum Block : byte
+    public enum Block : byte
     {
         Floor = 0x0,
         Exit = 0x1,

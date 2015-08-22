@@ -4,9 +4,9 @@ using System.IO.Compression;
 
 namespace SilverBotAndGuy
 {
-    static class FileLoader
+    public static class FileLoader
     {
-        internal static Block[,] ReadFile (Stream stream, out byte[][][] solutions, out System.Version version, out uint startDozerBotX, out uint startDozerBotY, out bool silverBot, out uint silverBotX, out uint silverBotY)
+        public static Block[,] ReadFile (Stream stream, out byte[][][] solutions, out System.Version version, out uint startDozerBotX, out uint startDozerBotY, out bool silverBot, out uint silverBotX, out uint silverBotY)
         {
             solutions = (byte[][][])Array.CreateInstance(typeof(byte[][]), 0);
             silverBotX = default(uint);

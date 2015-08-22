@@ -50,13 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\LevelCreator\LevelCreatorExtensionMethods.cs">
-      <Link>LevelCreatorExtensionMethods.cs</Link>
-    </Compile>
-    <Compile Include="Block.cs" />
     <Compile Include="CreateSolution.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FileLoader.cs" />
     <Compile Include="GameTextures.cs" />
     <Compile Include="Graphics\PushAnim.cs" />
     <Compile Include="Graphics\Laserbeam.cs" />
@@ -69,7 +64,6 @@
     <Compile Include="ReleaseSolution.cs" />
     <Compile Include="ShadowMap.cs" />
     <Compile Include="SilverBotMirrorPosition.cs" />
-    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -229,6 +223,12 @@
     <None Include="Content\shadow_ul.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileLoader\FileLoader.csproj">
+      <Project>{2e808a42-f09d-48f8-9117-6b308d90cf2f}</Project>
+      <Name>FileLoader</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

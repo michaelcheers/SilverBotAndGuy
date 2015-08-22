@@ -104,7 +104,7 @@ namespace SilverBotAndGuy
                 writer.Flush();
                 writer.Close();
             }
-            if (File.Exists("Levels/" + currentLevel + ".sbalvl"))
+            if (File.Exists("Levels/" + (currentLevel + 1) +".sbalvl"))
                 LoadNextLevel();
             else
             {
@@ -135,7 +135,9 @@ namespace SilverBotAndGuy
                 LoadLevel(Environment.GetCommandLineArgs()[1]);
             }
             else
+            {
                 LoadLevel("Levels/" + currentLevel + ".sbalvl");
+            }
         }
 
         internal PlayerAvatar silverBot = null;

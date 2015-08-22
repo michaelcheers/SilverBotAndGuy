@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
-    static class Version
+    public static class Version
     {
         public static void Write (this BinaryWriter writer, System.Version version)
         {

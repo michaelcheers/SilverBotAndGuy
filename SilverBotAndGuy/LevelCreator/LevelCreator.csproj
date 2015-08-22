@@ -54,6 +54,7 @@
     <Compile Include="..\SilverBotAndGuy\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
+    <Compile Include="LevelCreatorExtensionMethods.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

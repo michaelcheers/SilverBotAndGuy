@@ -1,5 +1,6 @@
 ﻿using SilverBotAndGuy;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -135,6 +136,7 @@ namespace LevelCreator
             writer.Write(SilverBotAndGuy.Version.Current);
             writer.Write(width);
             writer.Write(height);
+            writer.WriteArray(solutions.ToArray());
             bool silverBot = textBox1.Text.Contains('/');
             writer.Write(silverBot);
             if (silverBot)
@@ -283,6 +285,8 @@ namespace LevelCreator
             }
         }
 
+        List<byte[][]> solutions = new List<byte[][]>();
+
         private void Load_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -295,7 +299,9 @@ namespace LevelCreator
                     bool isSilverBot;
                     uint StartSilverBotX;
                     uint StartSilverBotY;
-                    LoadBlocks(FileLoader.ReadFile(fileStream, out version, out StartX, out StartY, out isSilverBot, out StartSilverBotX, out StartSilverBotY), StartX, StartY, isSilverBot, StartSilverBotX, StartSilverBotY);
+                    byte[][][] solutions;
+                    LoadBlocks(FileLoader.ReadFile(fileStream, out solutions, out version, out StartX, out StartY, out isSilverBot, out StartSilverBotX, out StartSilverBotY), StartX, StartY, isSilverBot, StartSilverBotX, StartSilverBotY);
+                    this.solutions = solutions.ToList();
                 }
             }
         }
@@ -307,6 +313,24 @@ namespace LevelCreator
             ProcessStartInfo info = new ProcessStartInfo(Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/SilverBotAndGuy.exe"), tmpPath);
             info.WorkingDirectory = Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/");
             Process.Start(info);
+        }
+
+        private void Prove_Click(object sender, EventArgs e)
+        {
+            string tmp1 = Path.GetTempFileName();
+            string tmp2 = Path.GetTempFileName();
+            saveFileFunc(File.OpenWrite(tmp1));
+            ProcessStartInfo info = new ProcessStartInfo(Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/SilverBotAndGuy.exe"), string.Format("{0} {1}", tmp1, tmp2));
+            info.WorkingDirectory = Path.GetFullPath("../../../SilverBotAndGuy/bin/Debug/");
+            Process.Start(info).WaitForExit();
+            File.Delete(tmp1);
+            BinaryReader reader = new BinaryReader(File.OpenRead(tmp2));
+            solutions.Add(reader.ReadDoubleByteArray());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            solutions.Clear();
         }
     }
 }

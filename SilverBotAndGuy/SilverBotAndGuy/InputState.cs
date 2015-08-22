@@ -76,9 +76,9 @@ namespace Input
     public class InputState
     {
         MouseState oldMouse;
-        public MouseState mouse { get; private set; }
+        public MouseState mouse { get; internal set; }
         KeyboardState oldKeyboard;
-        public KeyboardState keyboard { get; private set; }
+        public KeyboardState keyboard { get; internal set; }
         public bool pauseMouse { get; private set; }
 
         public MouseButtonState mouseLeft;

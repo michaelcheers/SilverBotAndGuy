@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SilverBotAndGuy
 {
-    public static class ExtensionMethods
+    public static partial class ExtensionMethods
     {
         public static Vector2 AddFloat(this Vector2 value, float add)
         {

@@ -95,6 +95,14 @@ namespace SilverBotAndGuy
         }
         public void DrawWin (PlayerAvatar player)
         {
+            if (outS != null)
+            {
+                byte[][] array = outS.GetBytes();
+                BinaryWriter writer = new BinaryWriter(File.OpenWrite(outSolution));
+                writer.WriteArray(array);
+                writer.Flush();
+                writer.Close();
+            }
             if (File.Exists("Levels/" + currentLevel + ".sbalvl"))
                 LoadNextLevel();
             else
@@ -118,12 +126,16 @@ namespace SilverBotAndGuy
         }
         public void RestartLevel ()
         {
-            currentLevel--;
-            LoadNextLevel();
+            LoadLevel();
         }
         public void LoadLevel  ()
         {
-            LoadLevel("Levels/" + currentLevel + ".sbalvl");
+            if (Environment.GetCommandLineArgs().Length > 1)
+            {
+                LoadLevel(Environment.GetCommandLineArgs()[1]);
+            }
+            else
+                LoadLevel("Levels/" + currentLevel + ".sbalvl");
         }
 
         internal PlayerAvatar silverBot = null;
@@ -136,7 +148,8 @@ namespace SilverBotAndGuy
             bool silverBot;
             uint StartSilverBotX;
             uint StartSilverBotY;
-            blocks = FileLoader.ReadFile(File.OpenRead(location), out version, out StartdozerBotX, out StartdozerBotY, out silverBot, out StartSilverBotX, out StartSilverBotY);
+            byte[][][] solutions;
+            blocks = FileLoader.ReadFile(File.OpenRead(location), out solutions, out version, out StartdozerBotX, out StartdozerBotY, out silverBot, out StartSilverBotX, out StartSilverBotY);
             laserManager =
                 new LaserbeamManager(Content);
             dozerBot = new PlayerAvatar(textures.dozerBot, new Vector2(StartdozerBotX, StartdozerBotY), blocks, laserManager.Internal.beams, this);
@@ -144,6 +157,11 @@ namespace SilverBotAndGuy
                 this.silverBot = new PlayerAvatar(textures.silverBot, new Vector2(StartSilverBotX, StartSilverBotY), blocks, laserManager.Internal.beams, this, true);
             else
                 this.silverBot = null;
+            this.solutions = new ReleaseSolution[solutions.Length];
+            for (int n = 0; n < solutions.Length; n++)
+            {
+                this.solutions[n] = new ReleaseSolution(solutions[n]);
+            }
             shadowMap = new ShadowMap(Content, blocks);
             ReloadLasers(StartSilverBotX, StartSilverBotY); 
             controlled = dozerBot;
@@ -165,6 +183,7 @@ namespace SilverBotAndGuy
         internal GameTextures textures;
         PlayerAvatar dozerBot;
         ShadowMap shadowMap;
+        ReleaseSolution[] solutions;
 
         public static Random rand = new Random();
         bool won;
@@ -180,6 +199,7 @@ namespace SilverBotAndGuy
 
         public MainGame () : base()
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 1;
@@ -193,16 +213,27 @@ namespace SilverBotAndGuy
         }
         protected override void OnExiting(object sender, EventArgs args)
         {
+
             Process.GetCurrentProcess().Kill();
             base.OnExiting(sender, args);
         }
+
+        CreateSolution outS = null;
+        string outSolution;
+
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             laserManager = new LaserbeamManager(Content);
             textures = new GameTextures(Content);
-            if (Environment.GetCommandLineArgs().Length == 2)
+            if (Environment.GetCommandLineArgs().Length == 3)
+            {
+                LoadLevel(Environment.GetCommandLineArgs()[1]);
+                outSolution = Environment.GetCommandLineArgs()[2];
+                outS = new CreateSolution();
+            }
+            else if (Environment.GetCommandLineArgs().Length == 2)
                 LoadLevel(Environment.GetCommandLineArgs()[1]);
             else
                 LoadNextLevel();
@@ -222,10 +253,10 @@ namespace SilverBotAndGuy
         }
         public void LoadNextLevel()
         {
-            LoadLevel();
             currentLevel++;
+            LoadLevel();
         }
-        int currentLevel = 1;
+        int currentLevel = 0;
         public const int widthOfBlock = 32;
         public const int heightOfBlock = 32;
         protected override void Draw(GameTime gameTime)
@@ -353,6 +384,8 @@ namespace SilverBotAndGuy
             }
         }
 
+        ReleaseSolution current;
+
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -367,8 +400,24 @@ namespace SilverBotAndGuy
                     }
                 }
             }
+            if (current != null)
+                if (!current.Update(inputState))
+                    inputState.Update();
+                else
+                    ;
+            else
+                inputState.Update();
+            if (outS != null)
+                outS.Add(inputState);
 
-            inputState.Update();
+            if (inputState.WasKeyJustPressed(Keys.F10))
+            {
+                if (solutions.Length > 0)
+                    current = solutions[0];
+                else
+                    System.Media.SystemSounds.Asterisk.Play();
+                RestartLevel();
+            }
 
             if (controlled == silverBot)
             {

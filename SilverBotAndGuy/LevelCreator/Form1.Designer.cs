@@ -34,6 +34,8 @@
             this.Load = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tryButton = new System.Windows.Forms.Button();
+            this.Prove = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -86,11 +88,33 @@
             this.tryButton.UseVisualStyleBackColor = true;
             this.tryButton.Click += new System.EventHandler(this.tryButton_Click);
             // 
+            // Prove
+            // 
+            this.Prove.Location = new System.Drawing.Point(1041, 103);
+            this.Prove.Name = "Prove";
+            this.Prove.Size = new System.Drawing.Size(123, 23);
+            this.Prove.TabIndex = 4;
+            this.Prove.Text = "Prove Possible";
+            this.Prove.UseVisualStyleBackColor = true;
+            this.Prove.Click += new System.EventHandler(this.Prove_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1041, 132);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(155, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Remove All Solutions";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1170, 515);
+            this.ClientSize = new System.Drawing.Size(1200, 515);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.Prove);
             this.Controls.Add(this.tryButton);
             this.Controls.Add(this.Load);
             this.Controls.Add(this.saveFile);
@@ -111,6 +135,8 @@
         private new System.Windows.Forms.Button Load;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button tryButton;
+        private System.Windows.Forms.Button Prove;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -30,6 +30,6 @@ namespace SilverBotAndGuy
         public const byte byte1 = 1;
         public const byte byte2 = 0;
         public const byte byte3 = 0;
-        public const byte byte4 = 1;
+        public const byte byte4 = 2;
     }
 }

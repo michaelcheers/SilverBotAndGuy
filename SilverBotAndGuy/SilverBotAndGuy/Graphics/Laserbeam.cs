@@ -66,7 +66,10 @@ namespace SilverBotAndGuy.Graphics
 
         public void Clear ()
         {
-            beams.Clear();
+            foreach (Laserbeam beam in beams)
+            {
+                beam.Clear();
+            }
         }
 
         public LaserbeamManager(ContentManager Content)
@@ -83,6 +86,16 @@ namespace SilverBotAndGuy.Graphics
             test.Add(new Vector2(6, 12));
             test.Add(new Vector2(7, 12));
             beams.Add(test);*/
+        }
+
+        internal Laserbeam GetBeam(int laserIndex)
+        {
+            while (beams.Count <= laserIndex)
+            {
+                beams.Add(new Laserbeam(textures));
+            }
+
+            return beams[laserIndex];
         }
        
         internal void Add (Laserbeam laserBeam)
@@ -103,11 +116,11 @@ namespace SilverBotAndGuy.Graphics
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Vector2 cameraPos)
         {
             foreach(Laserbeam beam in beams)
             {
-                beam.Draw(spriteBatch);
+                beam.Draw(spriteBatch, cameraPos);
             }
         }
     }
@@ -185,65 +198,66 @@ namespace SilverBotAndGuy.Graphics
                 endDirection = aEndDirection;
             }
 
-            public void Draw(LaserbeamTextures textures, SpriteBatch spriteBatch)
+            public void Draw(LaserbeamTextures textures, SpriteBatch spriteBatch, Vector2 cameraPos)
             {
                 if( startDirection != endDirection )
                 {
-                    DrawPartial(startDirection.Reverse(), textures, spriteBatch);
-                    DrawPartial(endDirection, textures, spriteBatch);
+                    DrawPartial(startDirection.Reverse(), textures, spriteBatch, cameraPos);
+                    DrawPartial(endDirection, textures, spriteBatch, cameraPos);
                 }
                 else if (startDirection == Direction4D.Up || startDirection == Direction4D.Down)
                 {
-                    spriteBatch.Draw(textures.beamV, pos, Color.White);
+                    spriteBatch.Draw(textures.beamV, pos - cameraPos, Color.White);
                 }
                 else // left/right
                 {
-                    spriteBatch.Draw(textures.beamH, pos, Color.White);
+                    spriteBatch.Draw(textures.beamH, pos - cameraPos, Color.White);
                 }
             }
 
-            public void DrawPartial(Direction4D direction, LaserbeamTextures textures, SpriteBatch spriteBatch)
+            public void DrawPartial(Direction4D direction, LaserbeamTextures textures, SpriteBatch spriteBatch, Vector2 cameraPos)
             {
                 switch (direction)
                 {
                     case Direction4D.Up:
-                        spriteBatch.Draw(textures.beamV, pos, new Rectangle(0, 0, 32, 16), Color.White);
+                        spriteBatch.Draw(textures.beamV, pos - cameraPos, new Rectangle(0, 0, 32, 16), Color.White);
                         break;
                     case Direction4D.Down:
-                        spriteBatch.Draw(textures.beamV, pos + new Vector2(0, 16.0f), new Rectangle(0, 16, 32, 16), Color.White);
+                        spriteBatch.Draw(textures.beamV, pos + new Vector2(0, 16.0f) - cameraPos, new Rectangle(0, 16, 32, 16), Color.White);
                         break;
                     case Direction4D.Left:
-                        spriteBatch.Draw(textures.beamH, pos, new Rectangle(0, 0, 16, 32), Color.White);
+                        spriteBatch.Draw(textures.beamH, pos - cameraPos, new Rectangle(0, 0, 16, 32), Color.White);
                         break;
                     case Direction4D.Right:
-                        spriteBatch.Draw(textures.beamH, pos + new Vector2(16.0f, 0.0f), new Rectangle(16, 0, 16, 32), Color.White);
+                        spriteBatch.Draw(textures.beamH, pos + new Vector2(16.0f, 0.0f) - cameraPos, new Rectangle(16, 0, 16, 32), Color.White);
                         break;
                 }
             }
 
-            public void DrawPulse(LaserbeamTextures textures, float position, SpriteBatch spriteBatch)
+            public void DrawPulse(LaserbeamTextures textures, float position, SpriteBatch spriteBatch, Vector2 cameraPos)
             {
                 float offsetPosition = position - 0.5f;
                 Direction4D relevantDirection = offsetPosition < 0 ? startDirection: endDirection;
                 switch (relevantDirection)
                 {
                     case Direction4D.Down:
-                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, offsetPosition*32.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, offsetPosition * 32.0f) - cameraPos, Color.White);
                         break;
                     case Direction4D.Up:
-                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, -offsetPosition * 32.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseV, pos + new Vector2(0, -offsetPosition * 32.0f) - cameraPos, Color.White);
                         break;
                     case Direction4D.Left:
-                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(- offsetPosition * 32.0f, 0.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(-offsetPosition * 32.0f, 0.0f) - cameraPos, Color.White);
                         break;
                     case Direction4D.Right:
-                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(offsetPosition * 32.0f, 0.0f), Color.White);
+                        spriteBatch.Draw(textures.pulseH, pos + new Vector2(offsetPosition * 32.0f, 0.0f) - cameraPos, Color.White);
                         break;
                 }
             }
         }
 
         Direction4D startDirection;
+        Direction4D endDirection;
         List<LaserbeamSquare> squares = new List<LaserbeamSquare>();
         List<float> pulses = new List<float>();
         LaserbeamTextures textures;
@@ -253,20 +267,25 @@ namespace SilverBotAndGuy.Graphics
         {
             startDirection = Direction4D.Right;
             textures = aTextures;
-            pulses.Add(0);
-            pulses.Add(1);
         }
 
         public void Clear()
         {
             startDirection = Direction4D.Right;
             squares.Clear();
-            pulses.Clear();
         }
 
         public void SetStartDirection(Direction4D direction)
         {
             startDirection = direction;
+        }
+
+        public void SetEndDirection(Direction4D direction)
+        {
+            if( squares.Count() > 0)
+            {
+                squares.Last().endDirection = direction;
+            }
         }
 
         public void Add(Vector2 newCoord)
@@ -295,7 +314,7 @@ namespace SilverBotAndGuy.Graphics
                 squares.Last().endDirection = newDirection;
             }
 
-            squares.Add(new LaserbeamSquare(newCoord, newDirection));
+            squares.Add(new LaserbeamSquare(newCoord, newDirection, endDirection));
         }
 
         public void Update()
@@ -303,9 +322,9 @@ namespace SilverBotAndGuy.Graphics
             for(int idx = 0; idx < pulses.Count; idx++)
             {
                 float PULSE_SPEED = 0.1f;
-                pulses[idx] = pulses[idx] + PULSE_SPEED;
+                pulses[idx] += PULSE_SPEED;
 
-                if( pulses[idx] > squares.Count )
+                if( pulses[idx] > 50 )//squares.Count )
                 {
                     pulses.RemoveAt(idx);
                     idx--;
@@ -320,18 +339,18 @@ namespace SilverBotAndGuy.Graphics
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Vector2 cameraPos)
         {
             foreach(LaserbeamSquare square in squares)
             {
-                square.Draw(textures, spriteBatch);
+                square.Draw(textures, spriteBatch, cameraPos);
             }
 
             foreach(float f in pulses)
             {
                 int index = (int)f;
                 if (index >= 0 && index < squares.Count)
-                    squares[index].DrawPulse(textures, f - index, spriteBatch);
+                    squares[index].DrawPulse(textures, f - index, spriteBatch, cameraPos);
             }
         }
     }

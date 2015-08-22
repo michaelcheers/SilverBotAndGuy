@@ -58,6 +58,7 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FileLoader.cs" />
     <Compile Include="GameTextures.cs" />
+    <Compile Include="Graphics\PushAnim.cs" />
     <Compile Include="Graphics\Laserbeam.cs" />
     <Compile Include="Graphics\Texture2D4D.cs" />
     <Compile Include="InputState.cs" />

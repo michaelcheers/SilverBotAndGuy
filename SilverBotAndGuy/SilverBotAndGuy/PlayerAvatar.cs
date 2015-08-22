@@ -8,8 +8,8 @@ namespace SilverBotAndGuy
 {
     class PlayerAvatar
     {
-        Vector2 gridPos;
-        Vector2 animPos;
+        public Vector2 gridPos;
+        public Vector2 animPos;
         Vector2 animTarget;
         Vector2 animVel;
         Texture2D4D textures;
@@ -20,6 +20,7 @@ namespace SilverBotAndGuy
         Texture2D explosionTexture;
         float explosionAnimStopwatch;
         bool isSilverBot;
+        bool isPushing;
 
         public bool IsTouchingSilverBot (Vector2 posToCheck)
         {
@@ -141,7 +142,20 @@ namespace SilverBotAndGuy
                     animVel += (animTarget - animPos) * 0.01f;
                     animVel *= 0.98f;
                 }
-                animPos += animVel;
+
+                float MAX_PUSH_SPEED = 1.6f;
+                if (isPushing && animVel.LengthSquared() > MAX_PUSH_SPEED * MAX_PUSH_SPEED)
+                {
+                    Vector2 pushVel = animVel;
+                    pushVel.Normalize();
+                    pushVel *= MAX_PUSH_SPEED;
+                    animPos += pushVel;
+                }
+                else
+                {
+                    animPos += animVel;
+                }
+
                 float newDistSqrToTarget = (animPos - animTarget).LengthSquared();
 
                 if( newDistSqrToTarget > distSqrToTarget )
@@ -198,30 +212,50 @@ namespace SilverBotAndGuy
 
         public event LandOnSquare Arrive;
 
-        public bool Push (Vector2 position, PlayerAvatar sender)
+        public bool GotPushed(Direction4D direction, PlayerAvatar sender)
         {
-            Point gridPosPlusPosition = (position + gridPos).ToPoint();
-            if (gridPosPlusPosition.X == grid.GetLength(0) - 1 || gridPosPlusPosition.Y == grid.GetLength(1) - 1 || gridPosPlusPosition.X == -1 ||gridPosPlusPosition.Y == -1)
-                return false;
-            if (grid[gridPosPlusPosition.X, gridPosPlusPosition.Y].IsSolid())
-                return false;
+            Vector2 offset = direction.ToVector2();
+            Point position = (gridPos + offset).ToPoint();
+
             if (isSilverBot)
             {
-                if (position.X > 0 || position.Y > 0)
+                if (!IsPositionFree(position))
+                    return false;
+                if (!IsPositionFree(position + new Point(1,0)))
+                    return false;
+                if (!IsPositionFree(position + new Point(0,1)))
+                    return false;
+                if (!IsPositionFree(position + new Point(1,1)))
+                    return false;
+            }
+            else
+            {
+                if (!IsPositionFree(position))
+                    return false;
+
+                if( position.X == game.silverBot.gridPos.X || position.X == game.silverBot.gridPos.X+1 )
                 {
-                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(1, 1);
-                    if (gridPosPlusPositionPlusSilverBot.X == grid.GetLength(0) - 1 || gridPosPlusPositionPlusSilverBot.Y == grid.GetLength(1) - 1)
+                    if( position.Y == game.silverBot.gridPos.Y || position.Y == game.silverBot.gridPos.Y+1 )
+                    {
+                        //can't push things into silverbot
                         return false;
-                }
-                else if (position.X < 0 || position.Y < 0)
-                {
-                    Point gridPosPlusPositionPlusSilverBot = gridPosPlusPosition + new Point(-1, -1);
-                    if (gridPosPlusPositionPlusSilverBot.X == -1 || gridPosPlusPositionPlusSilverBot.Y == -1)
-                        return false;
+                    }
                 }
             }
-            gridPos += position;
+
+            gridPos += offset;
             animTarget = gridPos * 32.0f;
+            isPushing = true;
+            return true;
+        }
+
+        public bool IsPositionFree(Point position)
+        {
+            if (position.X == grid.GetLength(0) - 1 || position.Y == grid.GetLength(1) - 1 || position.X == -1 || position.Y == -1)
+                return false;
+            if (grid[position.X, position.Y].IsSolid())
+                return false;
+
             return true;
         }
 
@@ -254,65 +288,86 @@ namespace SilverBotAndGuy
             return state;
         }
 
-    public bool TryStep(Direction4D moveDirection, out Vector2 moveTo)
+        public bool TryStep(Direction4D moveDirection, out Vector2 moveTo)
         {
+            isPushing = false;
             moveTo = new Vector2();
-            if (moveDirection != Direction4D.None)
+            if (moveDirection == Direction4D.None)
+                return false;
+
+            facing = moveDirection;
+            moveTo = moveDirection.ToVector2() + gridPos;
+            if (moveTo.X < 0 || moveTo.Y < 0 ||
+                moveTo.X >= grid.GetLength(0) || moveTo.Y >= grid.GetLength(1) ||
+                (isSilverBot ? (moveTo.X == grid.GetLength(0) - 1 || (moveTo.Y == grid.GetLength(1) - 1)) : false))
             {
-                facing = moveDirection;
-                moveTo = moveDirection.ToVector2() + gridPos;
-                if (moveTo.X < 0 || moveTo.Y < 0 || moveTo.X >= grid.GetLength(0) || moveTo.Y >= grid.GetLength(1) || (isSilverBot ? (moveTo.X == grid.GetLength(0) - 1 || (moveTo.Y == grid.GetLength(1) - 1)) : false))
+                return false;
+            }
+            Block moveToBlock = grid[(int)moveTo.X, (int)moveTo.Y];
+            Block moveToBlock1XPlus = default(Block);
+            Block moveToBlock1YPlus = default(Block);
+            Block moveToBlock1XYPlus = default(Block);
+            if (isSilverBot)
+            {
+                moveToBlock1XPlus = grid[(int)moveTo.X + 1, (int)moveTo.Y];
+                moveToBlock1YPlus = grid[(int)moveTo.X, (int)moveTo.Y + 1];
+                moveToBlock1XYPlus = grid[(int)moveTo.X + 1, (int)moveTo.Y + 1];
+            }
+            if (moveToBlock == Block.Crate)
+            {
+                Vector2 crateMovePlus = moveDirection.ToVector2();
+                if (IsTouchingSilverBot(crateMovePlus + moveTo))
                     return false;
-                Block moveToBlock = grid[(int)moveTo.X, (int)moveTo.Y];
-                Block moveToBlock1XPlus = default(Block);
-                Block moveToBlock1YPlus = default(Block);
-                if (isSilverBot)
+
+                Point targetPos = new Point( (int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y) );
+                if (grid[targetPos.X, targetPos.Y].IsSolid())
+                    return false;
+
+                grid[targetPos.X, targetPos.Y] = Block.Crate;
+                grid[(int)(moveTo.X), (int)moveTo.Y] = Block.Floor;
+                game.AddPushAnim(Block.Crate, targetPos, this, moveDirection);
+
+                gridPos = moveTo;
+                animTarget = gridPos * 32.0f;
+                game.ReloadLasers();
+                isPushing = true;
+                return true;
+            }
+            if (IsTouchingSilverBot(moveTo))
+            {
+                if (game.silverBot.GotPushed(moveDirection, this))
                 {
-                    moveToBlock1XPlus = grid[(int)moveTo.X + 1, (int)moveTo.Y];
-                    moveToBlock1YPlus = grid[(int)moveTo.X, (int)moveTo.Y + 1];
+                    isPushing = true;
                 }
-                if (moveToBlock == Block.Crate)
+                else
                 {
-                    Vector2 crateMovePlus = moveDirection.ToVector2();
-                    if (IsTouchingSilverBot(crateMovePlus + moveTo))
-                        return false;
-                    if (!grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)].IsSolid())
-                    {
-                        grid[(int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y)] = Block.Crate;
-                        grid[(int)(moveTo.X), (int)moveTo.Y] = Block.Floor;
-                    }
-                    else
-                        return false;
+                    return false;
                 }
-                if (IsTouchingSilverBot(moveTo))
-                    if (!game.silverBot.Push(moveDirection.ToVector2(), this))
-                        return false;
-                if (isSilverBot)
-                    goto SkipForeach;
-            SkipForeach:
-                if ((!MainGame.IsSolid(moveToBlock) || moveToBlock == Block.Panel || moveToBlock == Block.Exit) && (isSilverBot ? !MainGame.IsSolid(moveToBlock1XPlus) && !MainGame.IsSolid(moveToBlock1YPlus) : true))
-                {
-                    gridPos = moveTo;
-                    animTarget = gridPos * 32.0f;
-                    if (game.silverBot == null)
-                        game.ReloadLasers(uint.MaxValue, uint.MaxValue);
-                    else
-                        game.ReloadLasers((uint)game.silverBot.gridPos.X, (uint)game.silverBot.gridPos.Y);
-                    return true;
-                }
+            }
+            if (isSilverBot)
+                goto SkipForeach;
+        SkipForeach:
+            if ((!MainGame.IsSolid(moveToBlock) || moveToBlock == Block.Panel || moveToBlock == Block.Exit) &&
+                (!isSilverBot || (!MainGame.IsSolid(moveToBlock1XPlus) && !MainGame.IsSolid(moveToBlock1YPlus) && !MainGame.IsSolid(moveToBlock1XYPlus))))
+            {
+                gridPos = moveTo;
+                animTarget = gridPos * 32.0f;
+                game.ReloadLasers();
+                return true;
             }
 
             return false;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Vector2 cameraPos)
         {
-            spriteBatch.Draw(textures, facing, animPos);
+            Vector2 screenPos = animPos - cameraPos;
+            spriteBatch.Draw(textures, facing, screenPos);
             if( explosionAnimStopwatch > 0.0f )
             {
                 spriteBatch.Draw(explosionTexture, new Rectangle(
-                    (int)(animPos.X + (MainGame.widthOfBlock - explosionAnimStopwatch)/ 2.0f),
-                    (int)(animPos.Y + (MainGame.heightOfBlock - explosionAnimStopwatch) / 2.0f),
+                    (int)(screenPos.X + (MainGame.widthOfBlock - explosionAnimStopwatch) / 2.0f),
+                    (int)(screenPos.Y + (MainGame.heightOfBlock - explosionAnimStopwatch) / 2.0f),
                     (int)explosionAnimStopwatch,
                     (int)explosionAnimStopwatch), Color.White);
             }

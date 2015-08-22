@@ -208,6 +208,7 @@ namespace SilverBotAndGuy
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 1;
             graphics.PreferredBackBufferHeight = 1;
+            
         }
         protected override void Initialize()
         {

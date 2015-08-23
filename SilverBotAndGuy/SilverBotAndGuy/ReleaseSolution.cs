@@ -30,6 +30,7 @@ namespace SilverBotAndGuy
             if (frame == states.Length)
                 return false;
             state.keyboard = states[frame];
+            state.gamePad = new GamePadState();
             frame++;
             return true;
         }

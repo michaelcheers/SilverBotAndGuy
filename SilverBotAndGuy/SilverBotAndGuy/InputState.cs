@@ -22,8 +22,8 @@ namespace Input
         public int durationFrames;
         public Vector2 initialMousePos;
 
-        public static float DRAG_THRESHOLD = 3.0f;
-        public static float FRAMERATE = 1 / 30.0f;
+        public const float DRAG_THRESHOLD = 3.0f;
+        public const float FRAMERATE = 1 / 30.0f;
 
         public MouseButtonState(MouseButton button, MouseState initialState)
         {
@@ -77,6 +77,8 @@ namespace Input
     {
         MouseState oldMouse;
         public MouseState mouse { get; internal set; }
+        GamePadState oldGamePad;
+        public GamePadState gamePad { get; internal set; }
         KeyboardState oldKeyboard;
         public KeyboardState keyboard { get; internal set; }
         public bool pauseMouse { get; private set; }
@@ -89,6 +91,8 @@ namespace Input
         {
             oldKeyboard = keyboard;
             keyboard = Keyboard.GetState();
+            oldGamePad = gamePad;
+            gamePad = GamePad.GetState(PlayerIndex.One);
             if (WasKeyJustPressed(Keys.Space))
             {
                 pauseMouse = !pauseMouse;
@@ -145,6 +149,26 @@ namespace Input
             return !mouseRight.pressed && mouseRight.duration == 0;
         }
 
+        public bool WasButtonJustPressed (Buttons button)
+        {
+            return gamePad.IsButtonDown(button) && !oldGamePad.IsButtonDown(button);
+        }
+
+        public bool WasButtonJustReleased (Buttons button)
+        {
+            return !gamePad.IsButtonDown(button) && oldGamePad.IsButtonDown(button);
+        }
+
+        public bool IsButtonDown (Buttons button)
+        {
+            return gamePad.IsButtonDown(button);
+        }
+        
+        public bool IsButtonUp (Buttons button)
+        {
+            return gamePad.IsButtonUp(button);
+        }
+
         public bool WasKeyJustPressed(Keys key)
         {
             return keyboard.IsKeyDown(key) && !oldKeyboard.IsKeyDown(key);
@@ -165,7 +189,15 @@ namespace Input
             return keyboard.IsKeyUp(key);
         }
 
-        public Vector2 GetPseudoJoystick(Keys up, Keys down, Keys left, Keys right)
+        public Vector2 GetPseudoJoystick (Vector2 thumbstick, Keys up, Keys down, Keys left, Keys right)
+        {
+            Vector2 vec = (thumbstick + GetPseudoJoystick(up, down, left, right));
+            vec.X %= 2;
+            vec.Y %= 2;
+            return vec;
+        }
+
+        public Vector2 GetPseudoJoystick (Keys up, Keys down, Keys left, Keys right)
         {
             float upDown = 0.0f;
             if( keyboard.IsKeyDown(up) )

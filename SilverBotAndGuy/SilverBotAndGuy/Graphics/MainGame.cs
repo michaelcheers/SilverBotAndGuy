@@ -443,10 +443,13 @@ namespace SilverBotAndGuy
                     ;
             else
                 inputState.Update();
+
+            if (inputState.WasButtonJustPressed(Buttons.Back))
+                Exit();
             if (outS != null)
                 outS.Add(inputState);
 
-            if (inputState.WasKeyJustPressed(Keys.F10))
+            if (inputState.WasKeyJustPressed(Keys.F10) || inputState.WasButtonJustPressed(Buttons.X))
             {
                 if (solutions.Length > 0)
                     current = solutions[0];
@@ -457,18 +460,18 @@ namespace SilverBotAndGuy
 
             if (controlled == silverBot)
             {
-                if (inputState.WasKeyJustPressed(Keys.Escape))
+                if (inputState.WasKeyJustPressed(Keys.Escape) || inputState.WasButtonJustPressed(Buttons.B))
                     controlled = dozerBot;
                 else
-                    dozerBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
+                    dozerBot.Update(inputState.GetPseudoJoystick(inputState.gamePad.ThumbSticks.Left, Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
             }
             else if (controlled == dozerBot)
             {
                 if (silverBot != null)
-                    silverBot.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
+                    silverBot.Update(inputState.GetPseudoJoystick(inputState.gamePad.ThumbSticks.Left, Keys.Up, Keys.Down, Keys.Left, Keys.Right), false);
             }
 
-            controlled.Update(inputState.GetPseudoJoystick(Keys.Up, Keys.Down, Keys.Left, Keys.Right));
+            controlled.Update(inputState.GetPseudoJoystick(inputState.gamePad.ThumbSticks.Left, Keys.Up, Keys.Down, Keys.Left, Keys.Right));
             laserManager.Update();
 
             for (int Idx = 0; Idx < pushAnims.Count; )

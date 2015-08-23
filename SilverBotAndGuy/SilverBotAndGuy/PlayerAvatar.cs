@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SilverBotAndGuy.Graphics;
 using System;
 using System.Collections.Generic;
@@ -82,6 +83,7 @@ namespace SilverBotAndGuy
             Direction4D moveDirection = Direction4D.None;
             if (explosionAnimStopwatch > 0.0f)
             {
+                GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
                 explosionAnimStopwatch += 3.1f;
                 if( explosionAnimStopwatch > 64.0f )
                 {

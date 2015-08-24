@@ -25,8 +25,8 @@ namespace LevelCreator
             width = (uint)(split.OrderByDescending(o=>o.Length).ToArray()[0].Length);
             height = (uint)(split.Length);
             byte[,] blocks = new byte[width, height];
-            int y = (int)(0);
-            int x = (int)(0);
+            int y = 0;
+            int x = 0;
             foreach (char c in textBox1.Text)
             {
                 switch (c)
@@ -281,7 +281,8 @@ namespace LevelCreator
                     char currentChar = ParseBlock(current);
                     textBox1.Text += currentChar;
                 }
-                textBox1.Text += "\r\n";
+                if (y < blocks.GetLength(1) - 1)
+                    textBox1.Text += "\r\n";
             }
         }
 

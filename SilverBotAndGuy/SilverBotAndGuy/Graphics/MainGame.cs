@@ -145,6 +145,7 @@ namespace SilverBotAndGuy
 
         public void LoadLevel (string location)
         {
+            pushAnims.Clear();
             uint StartdozerBotX;
             uint StartdozerBotY;
             bool silverBot;

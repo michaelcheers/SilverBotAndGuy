@@ -318,10 +318,12 @@ namespace SilverBotAndGuy
             if (moveToBlock == Block.Crate)
             {
                 Vector2 crateMovePlus = moveDirection.ToVector2();
-                if (IsTouchingSilverBot(crateMovePlus + moveTo))
+                if (IsTouchingSilverBot(crateMovePlus + moveTo) || isSilverBot)
                     return false;
 
                 Point targetPos = new Point( (int)(moveTo.X + crateMovePlus.X), (int)(moveTo.Y + crateMovePlus.Y) );
+                if (targetPos.X < 0 || targetPos.Y < 0 || targetPos.X >= grid.GetLength(0) || targetPos.Y >= grid.GetLength(1))
+                    return false;
                 if (grid[targetPos.X, targetPos.Y].IsSolid())
                     return false;
 

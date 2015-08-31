@@ -124,10 +124,7 @@ namespace SilverBotAndGuy
                 }
             }
         }
-        public void RestartLevel ()
-        {
-            LoadLevel();
-        }
+        public void RestartLevel() => LoadLevel();
         public void LoadLevel  ()
         {
             if (Environment.GetCommandLineArgs().Length > 1)
@@ -279,6 +276,9 @@ namespace SilverBotAndGuy
                     (float)Math.Floor(controlled.animPos.X - graphics.GraphicsDevice.Viewport.Width * 0.5f),
                     (float)Math.Floor(controlled.animPos.Y - graphics.GraphicsDevice.Viewport.Height * 0.5f)
                 );
+
+
+                cameraPos += inputState.gamePad.ThumbSticks.Right * (5 * 32);
             }
 
             spriteBatch.Begin();

@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SilverBotAndGuy.Graphics
 {
@@ -20,8 +15,8 @@ namespace SilverBotAndGuy.Graphics
         {
             this.image = image;
             this.pusher = pusher;
-            this.pushOffset = offset;
-            this.destinationGridPos = destination;
+            pushOffset = offset;
+            destinationGridPos = destination;
         }
 
         public bool Finished()

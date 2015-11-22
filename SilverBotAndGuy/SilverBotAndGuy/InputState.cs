@@ -75,6 +75,7 @@ namespace Input
 
     public class InputState
     {
+        PlayerIndex gamePadIndex;
         MouseState oldMouse;
         public MouseState mouse { get; internal set; }
         GamePadState oldGamePad;
@@ -188,6 +189,8 @@ namespace Input
         {
             return keyboard.IsKeyUp(key);
         }
+
+        public InputState (PlayerIndex playerIndex = PlayerIndex.One) { gamePadIndex = playerIndex; }
 
         public Vector2 GetPseudoJoystick (Vector2 thumbstick, Keys up, Keys down, Keys left, Keys right)
         {

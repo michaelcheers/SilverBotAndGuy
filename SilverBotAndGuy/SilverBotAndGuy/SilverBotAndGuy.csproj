@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="CreateSolution.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GameSounds.cs" />
     <Compile Include="GameTextures.cs" />
     <Compile Include="Graphics\PushAnim.cs" />
     <Compile Include="Graphics\Laserbeam.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="ReleaseSolution.cs" />
     <Compile Include="ShadowMap.cs" />
     <Compile Include="SilverBotMirrorPosition.cs" />
+    <Compile Include="SilverSound.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -237,6 +239,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="game.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Sounds\Crate Drag 1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Sounds\Crate Drag 2.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Sounds\Getting Burned 1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Sounds\Ice Melt.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Sounds\Laser Bounce.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Sounds\Death.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

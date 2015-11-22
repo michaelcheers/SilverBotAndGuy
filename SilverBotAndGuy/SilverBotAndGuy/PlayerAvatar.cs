@@ -22,6 +22,7 @@ namespace SilverBotAndGuy
         float explosionAnimStopwatch;
         bool isSilverBot;
         bool isPushing;
+        private MainGame.GameSounds sounds { get { return game.sounds; } }
 
         public bool IsTouchingSilverBot (Vector2 posToCheck)
         {
@@ -203,6 +204,7 @@ namespace SilverBotAndGuy
 
         public void Die ()
         {
+            sounds.death.Play();
             Explode();
         }
 
@@ -335,6 +337,7 @@ namespace SilverBotAndGuy
                 animTarget = gridPos * 32.0f;
                 game.ReloadLasers();
                 isPushing = true;
+                sounds.cratePush.Play();
                 return true;
             }
             if (IsTouchingSilverBot(moveTo))

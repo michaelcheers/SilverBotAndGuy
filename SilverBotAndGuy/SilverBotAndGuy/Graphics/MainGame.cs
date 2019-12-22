@@ -139,6 +139,7 @@ namespace SilverBotAndGuy
 
         internal PlayerAvatar silverBot = null;
         System.Version version;
+        public GameSounds sounds;
 
         public void LoadLevel (string location)
         {
@@ -199,13 +200,13 @@ namespace SilverBotAndGuy
         {
         }
 
-        public MainGame () : base()
+        public MainGame ()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 1;
-            graphics.PreferredBackBufferHeight = 1;
+            graphics.PreferredBackBufferWidth = 3840;
+            graphics.PreferredBackBufferHeight = 2160;
             
         }
         protected override void Initialize()
@@ -230,6 +231,7 @@ namespace SilverBotAndGuy
 
             laserManager = new LaserbeamManager(Content);
             textures = new GameTextures(Content);
+            sounds = new GameSounds(Content);
             if (Environment.GetCommandLineArgs().Length == 3)
             {
                 LoadLevel(Environment.GetCommandLineArgs()[1]);
